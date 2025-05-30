@@ -3,17 +3,19 @@ pragma solidity ^0.8.28;
 
 import {Enum} from "lib/safe-smart-account/contracts/common/Enum.sol";
 import {Module} from "lib/zodiac/contracts/core/Module.sol";
-import {Guardable} from "lib/zodiac/contracts/guard/Guardable.sol";
 import {IAvatar} from "lib/zodiac/contracts/interfaces/IAvatar.sol";
-import {IGuard} from "lib/zodiac/contracts/interfaces/IGuard.sol";
+import {TypeDefinitions} from "lib/circles-contracts-v2/src/hub/TypeDefinitions.sol";
+import {IHubV2} from "lib/circles-contracts-v2/src/hub/IHub.sol";
 
-contract SubscriptionModule is Module, Guardable {
+contract SubscriptionModule is Module {
     struct Subscription {
         address recipient;
         uint256 amount;
         uint256 lastRedeemed;
         uint256 frequency;
     }
+
+    address public constant HUB_ADDRESS = 0xc12C1E50ABB450d6205Ea2C3Fa861b3B834d13e8;
 
     uint256 public subscriptionCounter;
     mapping(uint256 => Subscription) public subscriptions;
@@ -49,15 +51,41 @@ contract SubscriptionModule is Module, Guardable {
     }
 
     // TODO: Might be more convenient to redeem by recipient.
-    function redeemPayment(uint256 subId) external {
+    function redeemPayment(
+        uint256 subId,
+        address[] calldata flowVertices,
+        TypeDefinitions.FlowEdge[] calldata flow,
+        TypeDefinitions.Stream[] calldata streams,
+        bytes calldata packedCoordinates
+    ) external {
         Subscription memory sub = subscriptions[subId];
         if (sub.lastRedeemed + sub.frequency > block.timestamp) {
             revert NotRedeemable();
         }
+        uint256 requestedAmount = 0;
+        for (uint256 i = 0; i < flow.length; i++) {
+            if (flow[i].streamSinkId == 1) {
+                requestedAmount += flow[i].amount;
+            }
+        }
+        // Exact amount of the subscription must be redeemed.
+        if (requestedAmount != sub.amount) {
+            revert NotRedeemable();
+        }
         sub.lastRedeemed = block.timestamp;
         subscriptions[subId] = sub;
-        // TODO: This Transaction only Sends ETH. We need to send Circles!
-        require(exec(sub.recipient, sub.amount, "", Enum.Operation.DelegateCall), CannotExec());
+
+        require(
+            exec(
+                HUB_ADDRESS,
+                0,
+                abi.encodeWithSelector(
+                    IHubV2.operateFlowMatrix.selector, flowVertices, flow, streams, packedCoordinates
+                ),
+                Enum.Operation.DelegateCall
+            ),
+            CannotExec()
+        );
         emit Redeemed(subId, sub.recipient, sub.amount);
     }
 
@@ -67,8 +95,6 @@ contract SubscriptionModule is Module, Guardable {
         override
         returns (bool)
     {
-        IGuard(guard).checkTransaction(to, value, data, operation, 0, 0, 0, address(0), payable(0), "", msg.sender);
-
         (bytes memory txData,,) = abi.decode(data, (bytes, address, address));
 
         return IAvatar(target).execTransactionFromModule(to, value, txData, operation);
