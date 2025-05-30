@@ -12,14 +12,18 @@ contract SubscriptionModule is Module, Guardable {
         address recipient;
         uint256 amount;
         uint256 lastRedeemed;
-        uint256 nextRedeemable;
+        uint256 frequency;
     }
 
     uint256 public subscriptionCounter;
     mapping(uint256 => Subscription) public subscriptions;
 
-    event SubscriptionCreated(address indexed recipient, uint256 indexed subId);
-    event Redeemed(uint256 indexed subId);
+    event SubscriptionCreated(address indexed recipient, uint256 indexed subId, uint256 amount, uint256 frequency);
+    event Redeemed(uint256 indexed subId, address indexed recipient, uint256 amount);
+
+    error NotRedeemable();
+    /// @notice Thrown when the transaction cannot execute
+    error CannotExec();
 
     constructor(address _owner, address _avatar, address _target) {
         bytes memory initParams = abi.encode(_owner, _avatar, _target);
@@ -39,18 +43,22 @@ contract SubscriptionModule is Module, Guardable {
 
     function subscribe(address recipient, uint256 amount, uint256 frequency) external onlyOwner {
         subscriptionCounter++;
-        // Initial last & next redeemable are 0 (so first payment is immediately redeemable)
-        subscriptions[subscriptionCounter] = Subscription(recipient, amount, 0, 0);
-        emit SubscriptionCreated(recipient, subscriptionCounter);
+        // Initial lastRedeemed is 0 so first payment is immediately redeemable.
+        subscriptions[subscriptionCounter] = Subscription(recipient, amount, 0, frequency);
+        emit SubscriptionCreated(recipient, subscriptionCounter, amount, frequency);
     }
 
+    // TODO: Might be more convenient to redeem by recipient.
     function redeemPayment(uint256 subId) external {
-        // TODO:
-        // 1. Retrieve subscription
-        // 2. check redeemable
-        // 3. exec amount
-        // 4. emit Redeemd
-        emit Redeemed(subId);
+        Subscription memory sub = subscriptions[subId];
+        if (sub.lastRedeemed + sub.frequency > block.timestamp) {
+            revert NotRedeemable();
+        }
+        sub.lastRedeemed = block.timestamp;
+        subscriptions[subId] = sub;
+        // TODO: This Transaction only Sends ETH. We need to send Circles!
+        require(exec(sub.recipient, sub.amount, "", Enum.Operation.DelegateCall), CannotExec());
+        emit Redeemed(subId, sub.recipient, sub.amount);
     }
 
     /// @notice Executes the transaction from module with the guard checks
