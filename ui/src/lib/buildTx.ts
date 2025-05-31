@@ -7,20 +7,25 @@ import {
   keccak256,
   encodePacked,
   type Hex,
-  getCreate2Address
+  getCreate2Address,
 } from "viem";
 import { type MetaTransactionData } from "@safe-global/types-kit";
-import { HUB_ADDRESS, MODULE_PROXY_FACTORY, SUBSCRIPTION_MANAGER, SUBSCRIPTION_MASTER_COPY } from "./constants";
+import {
+  HUB_ADDRESS,
+  MODULE_PROXY_FACTORY,
+  SUBSCRIPTION_MANAGER,
+  SUBSCRIPTION_MASTER_COPY,
+} from "./constants";
 
-
-const defaultSalt = BigInt("110647465789069657756111682142268192901188952877020749627246931254533522453");
+const defaultSalt = BigInt(
+  "110647465789069657756111682142268192901188952877020749627246931254533522453",
+);
 
 export async function prepareEnableModuleTransactions(
   safeAddress: Address,
   managerAddress: Address = SUBSCRIPTION_MANAGER,
   salt: bigint = defaultSalt,
 ): Promise<MetaTransactionData[]> {
-
   const { tx: deployModuleTx, predictedAddress: moduleProxyAddress } =
     await buildModuleDeploymentTx(safeAddress, salt);
 
@@ -44,7 +49,6 @@ export async function prepareEnableModuleTransactions(
 
   return [deployModuleTx, enableModuleTx, registerModuleTx, moduleApprovalTx];
 }
-
 
 export async function buildModuleDeploymentTx(
   safeAddress: Address,
@@ -121,14 +125,15 @@ function buildRegisterManagerTx(
   };
 }
 
-
 function buildModuleApprovalTx(
   hubAddress: Address,
   moduleProxyAddress: Address,
 ): MetaTransactionData {
   // Build the call data for enabling the module
   const enableModuleData = encodeFunctionData({
-    abi: parseAbi(["function setApprovalForAll(address operator, bool approved)"]),
+    abi: parseAbi([
+      "function setApprovalForAll(address operator, bool approved)",
+    ]),
     functionName: "setApprovalForAll",
     args: [moduleProxyAddress, true],
   });
