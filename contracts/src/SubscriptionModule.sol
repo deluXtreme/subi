@@ -24,7 +24,7 @@ contract SubscriptionModule is Module {
     mapping(uint256 => Subscription) public subscriptions;
 
     event SubscriptionCreated(
-        address indexed subscriber, address indexed recipient, uint256 indexed subId, uint256 amount, uint256 frequency
+        uint256 indexed subId, address indexed subscriber, address indexed recipient, uint256 amount, uint256 frequency
     );
     event Redeemed(uint256 indexed subId, address indexed recipient, uint256 amount);
 
@@ -54,7 +54,7 @@ contract SubscriptionModule is Module {
         subscriptionCounter++;
         // Initial lastRedeemed is 0 so first payment is immediately redeemable.
         subscriptions[subscriptionCounter] = Subscription(recipient, amount, 0, frequency);
-        emit SubscriptionCreated(msg.sender, recipient, subscriptionCounter, amount, frequency);
+        emit SubscriptionCreated(subscriptionCounter, msg.sender, recipient, amount, frequency);
     }
 
     function _extractRecipient(bytes calldata coordinates, address[] calldata flowVertices)
