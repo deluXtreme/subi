@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useAccount, useWaitForTransactionReceipt } from "wagmi";
 import { useWriteSubscriptionModuleSubscribe } from "@/generated";
 import { getTransactionUrl } from "@/lib/blockscout";
+import { useSafeModule } from "@/hooks/use-safe-module";
 
 interface SubscribeButtonProps {
   recipient?: string;
@@ -14,8 +15,8 @@ interface SubscribeButtonProps {
 
 export function SubscribeButton({
   recipient = "0xcF6Dc192dc292D5F2789DA2DB02D6dD4f41f4214",
-  amount = BigInt(1000000), // 1 USDC (6 decimals)
-  frequency = BigInt(2592000), // 30 days
+  amount = BigInt(1000000000000), // 1 USDC (6 decimals)
+  frequency = BigInt(3600), // 1 hour
   className = "",
 }: SubscribeButtonProps) {
   const { address, isConnected } = useAccount();
@@ -28,6 +29,15 @@ export function SubscribeButton({
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({ hash });
   const [mounted, setMounted] = useState(false);
+  
+  const {
+    isModuleInstalled,
+    isCheckingModule,
+    isSafeWallet,
+    isCheckingSafe,
+    error: moduleError,
+    recheckModule,
+  } = useSafeModule();
 
   useEffect(() => {
     setMounted(true);
@@ -74,13 +84,95 @@ export function SubscribeButton({
     );
   }
 
-  // Show subscribe button
+  // Checking if it's a Safe wallet
+  if (isCheckingSafe) {
+    return (
+      <div className={`space-y-4 ${className}`}>
+        <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <p className="text-blue-800 text-sm">
+            🔍 Checking if connected wallet is a Safe...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Not a Safe wallet
+  if (isSafeWallet === false) {
+    return (
+      <div className={`space-y-4 ${className}`}>
+        <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-800 text-sm">
+            ❌ This app only works with Safe wallets. Please connect through a Safe interface.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Checking module installation
+  if (isCheckingModule) {
+    return (
+      <div className={`space-y-4 ${className}`}>
+        <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <p className="text-blue-800 text-sm">
+            🔍 Checking if SubscriptionModule is installed on your Safe...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Module check error
+  if (moduleError) {
+    return (
+      <div className={`space-y-4 ${className}`}>
+        <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-800 text-sm">
+            ❌ Error checking module: {moduleError}
+          </p>
+          <button
+            onClick={recheckModule}
+            className="mt-2 px-3 py-1 text-xs bg-red-100 hover:bg-red-200 text-red-800 rounded"
+          >
+            Retry Check
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Module not installed
+  if (isModuleInstalled === false) {
+    return (
+      <div className={`space-y-4 ${className}`}>
+        <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <p className="text-yellow-800 text-sm">
+            ⚠️ SubscriptionModule is not installed on your Safe
+          </p>
+          <p className="text-yellow-700 text-xs mt-1">
+            You need to install the SubscriptionModule as a Zodiac module first.
+          </p>
+        </div>
+        <button
+          onClick={() => {
+            // TODO: Implement module installation flow
+            alert('Module installation not yet implemented. Please install the SubscriptionModule manually through your Safe interface.')
+          }}
+          className="px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-medium transition-colors"
+        >
+          Install SubscriptionModule
+        </button>
+      </div>
+    );
+  }
+
+  // Module is installed - show subscribe button
   return (
     <div className={`space-y-4 ${className}`}>
-      <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-        <p className="text-yellow-800 text-sm">
-          ⚠️ This module must be installed on your Safe first. Only Safe owners
-          can create subscriptions.
+      <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+        <p className="text-green-800 text-sm">
+          ✅ SubscriptionModule is installed! You can create subscriptions.
         </p>
       </div>
 
