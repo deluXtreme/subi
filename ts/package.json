@@ -1,0 +1,22 @@
+{
+  "name": "ts",
+  "module": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "build": "bun build src/index.ts --outdir dist --target node",
+    "start": "bun run build && bun run dist/index.js",
+    "fmt": "npx prettier --write **/*.ts"
+  },
+  "devDependencies": {
+    "@safe-global/types-kit": "^2.0.1",
+    "@types/bun": "latest",
+    "prettier": "^3.5.3"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@safe-global/protocol-kit": "^6.0.4",
+    "viem": "^2.30.5"
+  }
+}

@@ -13,5 +13,6 @@ docs/
 # Dotenv file
 .env
 
+**/dist
 # Virtual env
 .venv
