@@ -13,3 +13,6 @@
 [submodule "contracts/lib/circles-contracts-v2"]
 	path = contracts/lib/circles-contracts-v2
 	url = https://github.com/aboutcircles/circles-contracts-v2
+[submodule "contracts/lib/solady"]
+	path = contracts/lib/solady
+	url = https://github.com/Vectorized/solady
