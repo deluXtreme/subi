@@ -16,4 +16,12 @@ docs/
 **/dist
 # Virtual env
 .venv
+
+# Python cache
+**/__pycache__/
+*.pyc
+
+# Silverback sessions
+automation/.silverback-sessions/
+
 .DS_Store

@@ -1,0 +1,205 @@
+[
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "subId",
+                "type": "uint256"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "module",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "nextRedeemAt",
+                "type": "uint256"
+            }
+        ],
+        "name": "Redeemed",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "subId",
+                "type": "uint256"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "module",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "subscriber",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "recipient",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "frequency",
+                "type": "uint256"
+            }
+        ],
+        "name": "SubscriptionCreated",
+        "type": "event"
+    },
+    {
+        "inputs": [],
+        "name": "getAllModules",
+        "outputs": [
+            {
+                "internalType": "address[]",
+                "name": "",
+                "type": "address[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            }
+        ],
+        "name": "modules",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "module",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "module",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "subId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "address[]",
+                "name": "flowVertices",
+                "type": "address[]"
+            },
+            {
+                "components": [
+                    {
+                        "internalType": "uint16",
+                        "name": "streamSinkId",
+                        "type": "uint16"
+                    },
+                    {
+                        "internalType": "uint192",
+                        "name": "amount",
+                        "type": "uint192"
+                    }
+                ],
+                "internalType": "struct TypeDefinitions.FlowEdge[]",
+                "name": "flow",
+                "type": "tuple[]"
+            },
+            {
+                "components": [
+                    {
+                        "internalType": "uint16",
+                        "name": "sourceCoordinate",
+                        "type": "uint16"
+                    },
+                    {
+                        "internalType": "uint16[]",
+                        "name": "flowEdgeIds",
+                        "type": "uint16[]"
+                    },
+                    {
+                        "internalType": "bytes",
+                        "name": "data",
+                        "type": "bytes"
+                    }
+                ],
+                "internalType": "struct TypeDefinitions.Stream[]",
+                "name": "streams",
+                "type": "tuple[]"
+            },
+            {
+                "internalType": "bytes",
+                "name": "packedCoordinates",
+                "type": "bytes"
+            }
+        ],
+        "name": "redeemPayment",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "module",
+                "type": "address"
+            }
+        ],
+        "name": "registerModule",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "recipient",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "frequency",
+                "type": "uint256"
+            }
+        ],
+        "name": "subscribe",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    }
+]
