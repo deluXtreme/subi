@@ -17,7 +17,7 @@ docs/
 # Virtual env
 .venv
 
-# Python cache files
+# Python cache
 **/__pycache__/
 *.pyc
 
