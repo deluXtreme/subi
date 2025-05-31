@@ -1,9 +1,14 @@
 import { type Address, type Hash } from "viem";
 import { getClient, getSafe } from "./config";
-import { buildModuleDeploymentTx, buildEnableModuleTx } from "./lib";
+import {
+  buildModuleDeploymentTx,
+  buildEnableModuleTx,
+  buildRegisterManagerTx,
+} from "./lib";
 
 export async function batchInstall(
   safeAddress: Address,
+  managerAddress: Address,
   salt: bigint = 110647465789069657756111682142268192901188952877020749627246931254533522453n,
 ): Promise<{ moduleAddress: Address; enableHash: Hash }> {
   const client = getClient();
@@ -16,13 +21,18 @@ export async function batchInstall(
 
   // Prepare the meta-transaction data object
   const enableModuleTx = buildEnableModuleTx(safeAddress, moduleAddress);
-
+  const registerModuleTx = buildRegisterManagerTx(
+    moduleAddress,
+    managerAddress,
+  );
   console.log("Deploy Tx", deployModuleTx);
   console.log("Enable Tx", enableModuleTx);
+  console.log("Register Tx", registerModuleTx);
+
   // Build the Safe transaction
   const safe = await getSafe(safeAddress);
   const safeModuleTx = await safe.createTransaction({
-    transactions: [deployModuleTx, enableModuleTx],
+    transactions: [deployModuleTx, enableModuleTx, registerModuleTx],
   });
   console.log("Safe transaction built", safeModuleTx);
 

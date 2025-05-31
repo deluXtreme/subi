@@ -28,7 +28,6 @@ export async function buildModuleDeploymentTx(
     functionName: "setUp",
     args: [initParams],
   });
-
   const deployData = encodeFunctionData({
     abi: parseAbi([
       "function deployModule(address masterCopy,bytes memory initializer, uint256 saltNonce) public returns (address proxy)",
@@ -73,6 +72,25 @@ export function buildEnableModuleTx(
   // Prepare the meta-transaction data object
   return {
     to: safeAddress,
+    value: "0",
+    data: enableModuleData,
+  };
+}
+
+export function buildRegisterManagerTx(
+  moduleAddress: Address,
+  managerAddress: Address,
+): MetaTransactionData {
+  // Build the call data for enabling the module
+  const enableModuleData = encodeFunctionData({
+    abi: parseAbi(["function registerModule(address module)"]),
+    functionName: "registerModule",
+    args: [moduleAddress],
+  });
+
+  // Prepare the meta-transaction data object
+  return {
+    to: managerAddress,
     value: "0",
     data: enableModuleData,
   };
