@@ -6,8 +6,11 @@ import {Module} from "lib/zodiac/contracts/core/Module.sol";
 import {IAvatar} from "lib/zodiac/contracts/interfaces/IAvatar.sol";
 import {TypeDefinitions} from "lib/circles-contracts-v2/src/hub/TypeDefinitions.sol";
 import {IHubV2} from "lib/circles-contracts-v2/src/hub/IHub.sol";
+import {ByteSlice} from "src/libraries/ByteSlice.sol";
 
 contract SubscriptionModule is Module {
+    using ByteSlice for bytes;
+
     struct Subscription {
         address recipient;
         uint256 amount;
@@ -26,6 +29,8 @@ contract SubscriptionModule is Module {
     error NotRedeemable();
     /// @notice Thrown when the transaction cannot execute
     error CannotExec();
+    error InvalidRecipient();
+    error InvalidAmount();
 
     constructor(address _owner, address _avatar, address _target) {
         bytes memory initParams = abi.encode(_owner, _avatar, _target);
@@ -50,6 +55,23 @@ contract SubscriptionModule is Module {
         emit SubscriptionCreated(recipient, subscriptionCounter, amount, frequency);
     }
 
+    function _extractRecipient(bytes calldata coordinates, address[] calldata flowVertices)
+        internal
+        pure
+        returns (address)
+    {
+        uint256 length = coordinates.length;
+        return flowVertices[coordinates.toInt(length - 2, length - 1)];
+    }
+
+    function _extractAmount(TypeDefinitions.FlowEdge[] calldata flow) internal pure returns (uint256 amount) {
+        for (uint256 i = 0; i < flow.length; i++) {
+            if (flow[i].streamSinkId == 1) {
+                amount += flow[i].amount;
+            }
+        }
+    }
+
     // TODO: Might be more convenient to redeem by recipient.
     function redeemPayment(
         uint256 subId,
@@ -62,16 +84,15 @@ contract SubscriptionModule is Module {
         if (sub.lastRedeemed + sub.frequency > block.timestamp) {
             revert NotRedeemable();
         }
-        uint256 requestedAmount = 0;
-        for (uint256 i = 0; i < flow.length; i++) {
-            if (flow[i].streamSinkId == 1) {
-                requestedAmount += flow[i].amount;
-            }
+
+        if (_extractRecipient(packedCoordinates, flowVertices) != sub.recipient) {
+            revert InvalidRecipient();
         }
         // Exact amount of the subscription must be redeemed.
-        if (requestedAmount != sub.amount) {
-            revert NotRedeemable();
+        if (_extractAmount(flow) != sub.amount) {
+            revert InvalidAmount();
         }
+
         sub.lastRedeemed = block.timestamp;
         subscriptions[subId] = sub;
 
