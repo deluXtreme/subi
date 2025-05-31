@@ -7,9 +7,7 @@ import {
   keccak256,
   encodePacked,
   type Hex,
-  getCreate2Address,
-  http,
-  createPublicClient,
+  getCreate2Address
 } from "viem";
 import { type MetaTransactionData } from "@safe-global/types-kit";
 import { HUB_ADDRESS, MODULE_PROXY_FACTORY, SUBSCRIPTION_MASTER_COPY } from "./constants";
