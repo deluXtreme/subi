@@ -9,7 +9,13 @@ bun install
 To run:
 
 ```bash
-bun run index.ts
+bun run start
 ```
 
-This project was created using `bun init` in bun v1.2.14. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+# CLI Usage
+
+1. visit circles & get your PRIVATE_KEY from local storage (or any owner key).
+2. cd ts
+3. cp sample.env .env (and fill out your keys) `SAFE_ADDRESS`, `PRIVATE_KEY`
+4. source .env
+5. bun run start
