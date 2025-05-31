@@ -8,13 +8,19 @@ import pandas as pd
 import requests
 from ape import Contract, accounts, chain
 from ape.types import LogFilter
+from ape_accounts import import_account_from_private_key
 from silverback import SilverbackBot, StateSnapshot
 
 # Instantiate bot
 bot = SilverbackBot()
 
-# Auto sign
-PROMPT_AUTOSIGN = bot.signer
+# Private key
+ALIAS = os.environ.get("ALIAS")
+PASSPHRASE = os.environ.get("PASSPHRASE")
+PRIVATE_KEY = os.environ.get("PRIVATE_KEY")
+signer_account = import_account_from_private_key(ALIAS, PASSPHRASE, PRIVATE_KEY)
+signer_account.set_autosign(passphrase=PASSPHRASE, enabled=True)
+bot.signer = signer_account
 
 # File path configuration - use Path objects
 BLOCK_FILEPATH = Path(os.environ.get("BLOCK_FILEPATH", ".db/block.csv"))
@@ -479,7 +485,6 @@ def handle_subscription_creation(log):
 def handle_redemption(log):
     subscriptions_df = _load_subscriptions_db()
 
-    # Update the redeem_at time for the specific subscription
     mask = (subscriptions_df["sub_id"] == log.subId) & (subscriptions_df["module"] == log.module)
     subscriptions_df.loc[mask, "redeem_at"] = log.nextRedeemAt
 
