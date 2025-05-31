@@ -10,15 +10,14 @@ import {
   getCreate2Address
 } from "viem";
 import { type MetaTransactionData } from "@safe-global/types-kit";
-import { HUB_ADDRESS, MODULE_PROXY_FACTORY, SUBSCRIPTION_MASTER_COPY } from "./constants";
-import { gnosis } from "viem/chains";
+import { HUB_ADDRESS, MODULE_PROXY_FACTORY, SUBSCRIPTION_MANAGER, SUBSCRIPTION_MASTER_COPY } from "./constants";
 
 
 const defaultSalt = BigInt("110647465789069657756111682142268192901188952877020749627246931254533522453");
 
 export async function prepareEnableModuleTransactions(
   safeAddress: Address,
-  managerAddress: Address,
+  managerAddress: Address = SUBSCRIPTION_MANAGER,
   salt: bigint = defaultSalt,
 ): Promise<MetaTransactionData[]> {
 
