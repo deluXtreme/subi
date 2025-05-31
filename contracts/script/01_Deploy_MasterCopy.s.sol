@@ -11,7 +11,7 @@ interface ISingletonFactory {
 
 // With verification:
 /*
-    forge script script/Deploy_MasterCopy.s.sol \
+    forge script script/01_Deploy_MasterCopy.s.sol \
     --rpc-url gnosis \
     --private-key $PRIVATE_KEY \
     --verify --etherscan-api-key $ETHERSCAN_API_KEY \
