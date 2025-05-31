@@ -1,7 +1,21 @@
 [project]
-name = "bot"
+name = "automation"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = ["eth-ape==0.8.34", "silverback==0.7.24"]
+
+[tool.uv]
+dev-dependencies = ["ruff>=0.11.12"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E", # pycodestyle errors
+    "F", # pyflakes
+    "I", # isort
+]
