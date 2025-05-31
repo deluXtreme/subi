@@ -19,13 +19,11 @@ contract SubscriptionModule is Module {
     }
 
     address public constant HUB_ADDRESS = 0xc12C1E50ABB450d6205Ea2C3Fa861b3B834d13e8;
+    address public constant SUBSCRIPTION_MANAGER = 0xd1F11A260720010D43587317CF8Dad46aF129744;
 
     uint256 public subscriptionCounter;
     mapping(uint256 => Subscription) public subscriptions;
 
-    event SubscriptionCreated(
-        uint256 indexed subId, address indexed subscriber, address indexed recipient, uint256 amount, uint256 frequency
-    );
     event Redeemed(uint256 indexed subId, address indexed recipient, uint256 amount);
 
     error NotRedeemable();
@@ -50,11 +48,19 @@ contract SubscriptionModule is Module {
         transferOwnership(_owner);
     }
 
-    function subscribe(address recipient, uint256 amount, uint256 frequency) external onlyOwner {
-        subscriptionCounter++;
+    modifier onlyManager() {
+        require(msg.sender == SUBSCRIPTION_MANAGER);
+        _;
+    }
+
+    function subscribe(address recipient, uint256 amount, uint256 frequency)
+        external
+        onlyManager
+        returns (uint256 subId)
+    {
+        subId = subscriptionCounter++;
         // Initial lastRedeemed is 0 so first payment is immediately redeemable.
         subscriptions[subscriptionCounter] = Subscription(recipient, amount, 0, frequency);
-        emit SubscriptionCreated(subscriptionCounter, msg.sender, recipient, amount, frequency);
     }
 
     function _extractRecipient(bytes calldata coordinates, address[] calldata flowVertices)
