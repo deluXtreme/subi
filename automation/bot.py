@@ -20,7 +20,6 @@ PASSPHRASE = os.environ.get("PASSPHRASE")
 PRIVATE_KEY = os.environ.get("PRIVATE_KEY")
 signer_account = import_account_from_private_key(ALIAS, PASSPHRASE, PRIVATE_KEY)
 signer_account.set_autosign(passphrase=PASSPHRASE, enabled=True)
-bot.signer = signer_account
 
 # File path configuration - use Path objects
 BLOCK_FILEPATH = Path(os.environ.get("BLOCK_FILEPATH", ".db/block.csv"))
@@ -428,7 +427,7 @@ def _redeem(sub_id: int, module: str, subscriber: str, recipient: str, amount: i
         click.echo(f"streams ({len(streams)} items): {streams}")
         click.echo(f"packed_coordinates: {packed_coordinates}")
         click.echo(f"packed_coordinates length: {len(packed_coordinates)} chars")
-        click.echo(f"sender: {bot.signer.address}")
+        click.echo(f"sender: {signer_account.address}")
         click.echo("=== END DEBUG INFO ===")
 
         subscription_manager.redeemPayment(
@@ -438,7 +437,7 @@ def _redeem(sub_id: int, module: str, subscriber: str, recipient: str, amount: i
             flow_edges,
             streams,
             packed_coordinates,
-            sender=bot.signer,
+            sender=signer_account,
         )
 
         click.echo(f"Redemption completed for sub {sub_id} on module {module}")
