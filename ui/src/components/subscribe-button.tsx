@@ -94,7 +94,7 @@ export function SubscribeButton({
     return (
       <div className={`space-y-4 ${className}`}>
         <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-blue-800 text-sm">
+          <p className="text-circles-primary text-sm font-medium">
             🔍 Checking if you have a subscription module registered...
           </p>
         </div>
@@ -119,11 +119,11 @@ export function SubscribeButton({
   if (!hasModuleInstalled) {
     return (
       <div className={`space-y-4 ${className}`}>
-        <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <p className="text-yellow-800 text-sm">
+        <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
+          <p className="text-circles-accent text-sm font-medium">
             ⚠️ No subscription module found for your address
           </p>
-          <p className="text-yellow-700 text-xs mt-1">
+          <p className="text-gray-600 text-xs mt-1">
             You need to register a subscription module first.
           </p>
         </div>
@@ -132,7 +132,7 @@ export function SubscribeButton({
             // TODO: Implement module registration flow
             alert('Module registration not yet implemented. Please register a subscription module first.')
           }}
-          className="px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-medium transition-colors"
+          className="px-6 py-3 bg-circles-accent hover:bg-circles-accent text-white rounded-lg font-bold transition-colors"
         >
           Register Module
         </button>
@@ -144,10 +144,10 @@ export function SubscribeButton({
   return (
     <div className={`space-y-4 ${className}`}>
       <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-        <p className="text-green-800 text-sm">
+        <p className="text-green-700 text-sm font-medium">
           ✅ Subscription module found! You can create subscriptions.
         </p>
-        <p className="text-green-700 text-xs mt-1">
+        <p className="text-gray-600 text-xs mt-1 font-mono">
           Module: {userModuleAddress}
         </p>
       </div>
@@ -155,7 +155,7 @@ export function SubscribeButton({
       <button
         onClick={handleSubscribe}
         disabled={isPending || isConfirming}
-        className={`px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors ${
+        className={`px-6 py-3 bg-circles-primary hover:bg-circles-primary text-white rounded-lg font-bold transition-colors ${
           isPending || isConfirming ? "opacity-50 cursor-not-allowed" : ""
         }`}
       >
@@ -168,19 +168,19 @@ export function SubscribeButton({
 
       {error && (
         <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-red-800 text-sm">❌ Error: {error.message}</p>
+          <p className="text-red-700 text-sm font-medium">❌ Error: {error.message}</p>
         </div>
       )}
 
       {hash && isConfirming && (
         <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-blue-800 text-sm">
+          <p className="text-circles-primary text-sm font-medium">
             ⏳ Transaction submitted. Waiting for confirmation...{" "}
             <a
               href={getTransactionUrl(hash)}
               target="_blank"
               rel="noopener noreferrer"
-              className="underline hover:no-underline"
+              className="text-circles-accent underline hover:no-underline font-semibold"
             >
               View transaction
             </a>
@@ -190,18 +190,18 @@ export function SubscribeButton({
 
       {isConfirmed && (
         <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-          <p className="text-green-800 text-sm">
+          <p className="text-green-700 text-sm font-medium">
             ✅ Subscription created successfully!{" "}
             <a
               href={getTransactionUrl(hash!)}
               target="_blank"
               rel="noopener noreferrer"
-              className="underline hover:no-underline"
+              className="text-circles-accent underline hover:no-underline font-semibold"
             >
               View transaction
             </a>
           </p>
-          <p className="text-green-700 text-xs mt-1">
+          <p className="text-gray-600 text-xs mt-1">
             Recipients can now redeem payments when they become due.
           </p>
         </div>

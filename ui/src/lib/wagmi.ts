@@ -16,7 +16,7 @@ const getProjectId = (): string => {
 
 // RainbowKit configuration for Gnosis chain
 export const wagmiConfig = getDefaultConfig({
-  appName: "Subscription Manager",
+  appName: "Subi",
   projectId: getProjectId(),
   chains: [gnosis],
   ssr: true,

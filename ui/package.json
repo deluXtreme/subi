@@ -16,6 +16,7 @@
     "@safe-global/safe-core-sdk": "^3.3.5",
     "@tanstack/react-query": "^5.79.0",
     "next": "15.3.3",
+    "next-themes": "^0.4.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "viem": "^2.30.5",
