@@ -10,6 +10,7 @@
     "generate": "wagmi generate"
   },
   "dependencies": {
+    "@blockscout/app-sdk": "^0.1.1",
     "@rainbow-me/rainbowkit": "^2.2.5",
     "@safe-global/api-kit": "^3.0.1",
     "@safe-global/safe-core-sdk": "^3.3.5",
