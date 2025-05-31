@@ -28,6 +28,16 @@ export const contextUpgradeableAbi = [
 ] as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// EnumerableSetLib
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const enumerableSetLibAbi = [
+  { type: 'error', inputs: [], name: 'ExceedsCapacity' },
+  { type: 'error', inputs: [], name: 'IndexOutOfBounds' },
+  { type: 'error', inputs: [], name: 'ValueIsZeroSentinel' },
+] as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // FactoryFriendly
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -912,6 +922,61 @@ export const iMulticall3Abi = [
 ] as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ISubscriptionModule
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const iSubscriptionModuleAbi = [
+  {
+    type: 'function',
+    inputs: [],
+    name: 'owner',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'subId', internalType: 'uint256', type: 'uint256' },
+      { name: 'flowVertices', internalType: 'address[]', type: 'address[]' },
+      {
+        name: 'flow',
+        internalType: 'struct TypeDefinitions.FlowEdge[]',
+        type: 'tuple[]',
+        components: [
+          { name: 'streamSinkId', internalType: 'uint16', type: 'uint16' },
+          { name: 'amount', internalType: 'uint192', type: 'uint192' },
+        ],
+      },
+      {
+        name: 'streams',
+        internalType: 'struct TypeDefinitions.Stream[]',
+        type: 'tuple[]',
+        components: [
+          { name: 'sourceCoordinate', internalType: 'uint16', type: 'uint16' },
+          { name: 'flowEdgeIds', internalType: 'uint16[]', type: 'uint16[]' },
+          { name: 'data', internalType: 'bytes', type: 'bytes' },
+        ],
+      },
+      { name: 'packedCoordinates', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'redeemPayment',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'recipient', internalType: 'address', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+      { name: 'frequency', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'subscribe',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'nonpayable',
+  },
+] as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Initializable
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1172,12 +1237,165 @@ export const scriptUtilsAbi = [
 ] as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// SubscriptionModule
+// SubscriptionManager
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
  */
+export const subscriptionManagerAbi = [
+  {
+    type: 'function',
+    inputs: [],
+    name: 'getAllModules',
+    outputs: [{ name: '', internalType: 'address[]', type: 'address[]' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'user', internalType: 'address', type: 'address' }],
+    name: 'modules',
+    outputs: [{ name: 'module', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'module', internalType: 'address', type: 'address' },
+      { name: 'subId', internalType: 'uint256', type: 'uint256' },
+      { name: 'flowVertices', internalType: 'address[]', type: 'address[]' },
+      {
+        name: 'flow',
+        internalType: 'struct TypeDefinitions.FlowEdge[]',
+        type: 'tuple[]',
+        components: [
+          { name: 'streamSinkId', internalType: 'uint16', type: 'uint16' },
+          { name: 'amount', internalType: 'uint192', type: 'uint192' },
+        ],
+      },
+      {
+        name: 'streams',
+        internalType: 'struct TypeDefinitions.Stream[]',
+        type: 'tuple[]',
+        components: [
+          { name: 'sourceCoordinate', internalType: 'uint16', type: 'uint16' },
+          { name: 'flowEdgeIds', internalType: 'uint16[]', type: 'uint16[]' },
+          { name: 'data', internalType: 'bytes', type: 'bytes' },
+        ],
+      },
+      { name: 'packedCoordinates', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'redeemPayment',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'module', internalType: 'address', type: 'address' }],
+    name: 'registerModule',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'recipient', internalType: 'address', type: 'address' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+      { name: 'frequency', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'subscribe',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'subId',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: true,
+      },
+      {
+        name: 'module',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'nextRedeemAt',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: true,
+      },
+    ],
+    name: 'Redeemed',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'subId',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: true,
+      },
+      {
+        name: 'module',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'subscriber',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'recipient',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+      {
+        name: 'amount',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+      {
+        name: 'frequency',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'SubscriptionCreated',
+  },
+] as const
+
+/**
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ */
+export const subscriptionManagerAddress = {
+  100: '0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57',
+} as const
+
+/**
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ */
+export const subscriptionManagerConfig = {
+  address: subscriptionManagerAddress,
+  abi: subscriptionManagerAbi,
+} as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// SubscriptionModule
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export const subscriptionModuleAbi = [
   {
     type: 'constructor',
@@ -1192,6 +1410,13 @@ export const subscriptionModuleAbi = [
     type: 'function',
     inputs: [],
     name: 'HUB_ADDRESS',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'SUBSCRIPTION_MANAGER',
     outputs: [{ name: '', internalType: 'address', type: 'address' }],
     stateMutability: 'view',
   },
@@ -1236,7 +1461,7 @@ export const subscriptionModuleAbi = [
       { name: 'packedCoordinates', internalType: 'bytes', type: 'bytes' },
     ],
     name: 'redeemPayment',
-    outputs: [],
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'nonpayable',
   },
   {
@@ -1275,7 +1500,7 @@ export const subscriptionModuleAbi = [
       { name: 'frequency', internalType: 'uint256', type: 'uint256' },
     ],
     name: 'subscribe',
-    outputs: [],
+    outputs: [{ name: 'subId', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'nonpayable',
   },
   {
@@ -1367,62 +1592,6 @@ export const subscriptionModuleAbi = [
     anonymous: false,
     inputs: [
       {
-        name: 'subId',
-        internalType: 'uint256',
-        type: 'uint256',
-        indexed: true,
-      },
-      {
-        name: 'recipient',
-        internalType: 'address',
-        type: 'address',
-        indexed: true,
-      },
-      {
-        name: 'amount',
-        internalType: 'uint256',
-        type: 'uint256',
-        indexed: false,
-      },
-    ],
-    name: 'Redeemed',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      {
-        name: 'recipient',
-        internalType: 'address',
-        type: 'address',
-        indexed: true,
-      },
-      {
-        name: 'subId',
-        internalType: 'uint256',
-        type: 'uint256',
-        indexed: true,
-      },
-      {
-        name: 'amount',
-        internalType: 'uint256',
-        type: 'uint256',
-        indexed: false,
-      },
-      {
-        name: 'frequency',
-        internalType: 'uint256',
-        type: 'uint256',
-        indexed: false,
-      },
-    ],
-    name: 'SubscriptionCreated',
-  },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      {
         name: 'previousTarget',
         internalType: 'address',
         type: 'address',
@@ -1454,21 +1623,6 @@ export const subscriptionModuleAbi = [
     name: 'OwnableUnauthorizedAccount',
   },
 ] as const
-
-/**
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
- */
-export const subscriptionModuleAddress = {
-  100: '0x01E65042f8CE628f07bba35c97883825e7B97c2f',
-} as const
-
-/**
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
- */
-export const subscriptionModuleConfig = {
-  address: subscriptionModuleAddress,
-  abi: subscriptionModuleAbi,
-} as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // React
@@ -2396,6 +2550,71 @@ export const useSimulateIMulticall3TryBlockAndAggregate =
   })
 
 /**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link iSubscriptionModuleAbi}__
+ */
+export const useReadISubscriptionModule = /*#__PURE__*/ createUseReadContract({
+  abi: iSubscriptionModuleAbi,
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link iSubscriptionModuleAbi}__ and `functionName` set to `"owner"`
+ */
+export const useReadISubscriptionModuleOwner =
+  /*#__PURE__*/ createUseReadContract({
+    abi: iSubscriptionModuleAbi,
+    functionName: 'owner',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link iSubscriptionModuleAbi}__
+ */
+export const useWriteISubscriptionModule = /*#__PURE__*/ createUseWriteContract(
+  { abi: iSubscriptionModuleAbi },
+)
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link iSubscriptionModuleAbi}__ and `functionName` set to `"redeemPayment"`
+ */
+export const useWriteISubscriptionModuleRedeemPayment =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: iSubscriptionModuleAbi,
+    functionName: 'redeemPayment',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link iSubscriptionModuleAbi}__ and `functionName` set to `"subscribe"`
+ */
+export const useWriteISubscriptionModuleSubscribe =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: iSubscriptionModuleAbi,
+    functionName: 'subscribe',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link iSubscriptionModuleAbi}__
+ */
+export const useSimulateISubscriptionModule =
+  /*#__PURE__*/ createUseSimulateContract({ abi: iSubscriptionModuleAbi })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link iSubscriptionModuleAbi}__ and `functionName` set to `"redeemPayment"`
+ */
+export const useSimulateISubscriptionModuleRedeemPayment =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: iSubscriptionModuleAbi,
+    functionName: 'redeemPayment',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link iSubscriptionModuleAbi}__ and `functionName` set to `"subscribe"`
+ */
+export const useSimulateISubscriptionModuleSubscribe =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: iSubscriptionModuleAbi,
+    functionName: 'subscribe',
+  })
+
+/**
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link initializableAbi}__
  */
 export const useWatchInitializableEvent =
@@ -2689,355 +2908,413 @@ export const useReadScriptUtilsIsScript = /*#__PURE__*/ createUseReadContract({
 })
 
 /**
- * Wraps __{@link useReadContract}__ with `abi` set to __{@link subscriptionModuleAbi}__
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link subscriptionManagerAbi}__
  *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ */
+export const useReadSubscriptionManager = /*#__PURE__*/ createUseReadContract({
+  abi: subscriptionManagerAbi,
+  address: subscriptionManagerAddress,
+})
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link subscriptionManagerAbi}__ and `functionName` set to `"getAllModules"`
+ *
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ */
+export const useReadSubscriptionManagerGetAllModules =
+  /*#__PURE__*/ createUseReadContract({
+    abi: subscriptionManagerAbi,
+    address: subscriptionManagerAddress,
+    functionName: 'getAllModules',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link subscriptionManagerAbi}__ and `functionName` set to `"modules"`
+ *
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ */
+export const useReadSubscriptionManagerModules =
+  /*#__PURE__*/ createUseReadContract({
+    abi: subscriptionManagerAbi,
+    address: subscriptionManagerAddress,
+    functionName: 'modules',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link subscriptionManagerAbi}__
+ *
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ */
+export const useWriteSubscriptionManager = /*#__PURE__*/ createUseWriteContract(
+  { abi: subscriptionManagerAbi, address: subscriptionManagerAddress },
+)
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link subscriptionManagerAbi}__ and `functionName` set to `"redeemPayment"`
+ *
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ */
+export const useWriteSubscriptionManagerRedeemPayment =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: subscriptionManagerAbi,
+    address: subscriptionManagerAddress,
+    functionName: 'redeemPayment',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link subscriptionManagerAbi}__ and `functionName` set to `"registerModule"`
+ *
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ */
+export const useWriteSubscriptionManagerRegisterModule =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: subscriptionManagerAbi,
+    address: subscriptionManagerAddress,
+    functionName: 'registerModule',
+  })
+
+/**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link subscriptionManagerAbi}__ and `functionName` set to `"subscribe"`
+ *
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ */
+export const useWriteSubscriptionManagerSubscribe =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: subscriptionManagerAbi,
+    address: subscriptionManagerAddress,
+    functionName: 'subscribe',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link subscriptionManagerAbi}__
+ *
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ */
+export const useSimulateSubscriptionManager =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: subscriptionManagerAbi,
+    address: subscriptionManagerAddress,
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link subscriptionManagerAbi}__ and `functionName` set to `"redeemPayment"`
+ *
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ */
+export const useSimulateSubscriptionManagerRedeemPayment =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: subscriptionManagerAbi,
+    address: subscriptionManagerAddress,
+    functionName: 'redeemPayment',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link subscriptionManagerAbi}__ and `functionName` set to `"registerModule"`
+ *
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ */
+export const useSimulateSubscriptionManagerRegisterModule =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: subscriptionManagerAbi,
+    address: subscriptionManagerAddress,
+    functionName: 'registerModule',
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link subscriptionManagerAbi}__ and `functionName` set to `"subscribe"`
+ *
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ */
+export const useSimulateSubscriptionManagerSubscribe =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: subscriptionManagerAbi,
+    address: subscriptionManagerAddress,
+    functionName: 'subscribe',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link subscriptionManagerAbi}__
+ *
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ */
+export const useWatchSubscriptionManagerEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: subscriptionManagerAbi,
+    address: subscriptionManagerAddress,
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link subscriptionManagerAbi}__ and `eventName` set to `"Redeemed"`
+ *
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ */
+export const useWatchSubscriptionManagerRedeemedEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: subscriptionManagerAbi,
+    address: subscriptionManagerAddress,
+    eventName: 'Redeemed',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link subscriptionManagerAbi}__ and `eventName` set to `"SubscriptionCreated"`
+ *
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ */
+export const useWatchSubscriptionManagerSubscriptionCreatedEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: subscriptionManagerAbi,
+    address: subscriptionManagerAddress,
+    eventName: 'SubscriptionCreated',
+  })
+
+/**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link subscriptionModuleAbi}__
  */
 export const useReadSubscriptionModule = /*#__PURE__*/ createUseReadContract({
   abi: subscriptionModuleAbi,
-  address: subscriptionModuleAddress,
 })
 
 /**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `functionName` set to `"HUB_ADDRESS"`
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
  */
 export const useReadSubscriptionModuleHubAddress =
   /*#__PURE__*/ createUseReadContract({
     abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
     functionName: 'HUB_ADDRESS',
   })
 
 /**
+ * Wraps __{@link useReadContract}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `functionName` set to `"SUBSCRIPTION_MANAGER"`
+ */
+export const useReadSubscriptionModuleSubscriptionManager =
+  /*#__PURE__*/ createUseReadContract({
+    abi: subscriptionModuleAbi,
+    functionName: 'SUBSCRIPTION_MANAGER',
+  })
+
+/**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `functionName` set to `"avatar"`
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
  */
 export const useReadSubscriptionModuleAvatar =
   /*#__PURE__*/ createUseReadContract({
     abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
     functionName: 'avatar',
   })
 
 /**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `functionName` set to `"owner"`
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
  */
 export const useReadSubscriptionModuleOwner =
   /*#__PURE__*/ createUseReadContract({
     abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
     functionName: 'owner',
   })
 
 /**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `functionName` set to `"subscriptionCounter"`
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
  */
 export const useReadSubscriptionModuleSubscriptionCounter =
   /*#__PURE__*/ createUseReadContract({
     abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
     functionName: 'subscriptionCounter',
   })
 
 /**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `functionName` set to `"subscriptions"`
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
  */
 export const useReadSubscriptionModuleSubscriptions =
   /*#__PURE__*/ createUseReadContract({
     abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
     functionName: 'subscriptions',
   })
 
 /**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `functionName` set to `"target"`
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
  */
 export const useReadSubscriptionModuleTarget =
   /*#__PURE__*/ createUseReadContract({
     abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
     functionName: 'target',
   })
 
 /**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link subscriptionModuleAbi}__
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
  */
 export const useWriteSubscriptionModule = /*#__PURE__*/ createUseWriteContract({
   abi: subscriptionModuleAbi,
-  address: subscriptionModuleAddress,
 })
 
 /**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `functionName` set to `"redeemPayment"`
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
  */
 export const useWriteSubscriptionModuleRedeemPayment =
   /*#__PURE__*/ createUseWriteContract({
     abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
     functionName: 'redeemPayment',
   })
 
 /**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `functionName` set to `"renounceOwnership"`
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
  */
 export const useWriteSubscriptionModuleRenounceOwnership =
   /*#__PURE__*/ createUseWriteContract({
     abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
     functionName: 'renounceOwnership',
   })
 
 /**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `functionName` set to `"setAvatar"`
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
  */
 export const useWriteSubscriptionModuleSetAvatar =
   /*#__PURE__*/ createUseWriteContract({
     abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
     functionName: 'setAvatar',
   })
 
 /**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `functionName` set to `"setTarget"`
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
  */
 export const useWriteSubscriptionModuleSetTarget =
   /*#__PURE__*/ createUseWriteContract({
     abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
     functionName: 'setTarget',
   })
 
 /**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `functionName` set to `"setUp"`
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
  */
 export const useWriteSubscriptionModuleSetUp =
   /*#__PURE__*/ createUseWriteContract({
     abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
     functionName: 'setUp',
   })
 
 /**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `functionName` set to `"subscribe"`
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
  */
 export const useWriteSubscriptionModuleSubscribe =
   /*#__PURE__*/ createUseWriteContract({
     abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
     functionName: 'subscribe',
   })
 
 /**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `functionName` set to `"transferOwnership"`
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
  */
 export const useWriteSubscriptionModuleTransferOwnership =
   /*#__PURE__*/ createUseWriteContract({
     abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
     functionName: 'transferOwnership',
   })
 
 /**
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link subscriptionModuleAbi}__
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
  */
 export const useSimulateSubscriptionModule =
-  /*#__PURE__*/ createUseSimulateContract({
-    abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
-  })
+  /*#__PURE__*/ createUseSimulateContract({ abi: subscriptionModuleAbi })
 
 /**
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `functionName` set to `"redeemPayment"`
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
  */
 export const useSimulateSubscriptionModuleRedeemPayment =
   /*#__PURE__*/ createUseSimulateContract({
     abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
     functionName: 'redeemPayment',
   })
 
 /**
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `functionName` set to `"renounceOwnership"`
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
  */
 export const useSimulateSubscriptionModuleRenounceOwnership =
   /*#__PURE__*/ createUseSimulateContract({
     abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
     functionName: 'renounceOwnership',
   })
 
 /**
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `functionName` set to `"setAvatar"`
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
  */
 export const useSimulateSubscriptionModuleSetAvatar =
   /*#__PURE__*/ createUseSimulateContract({
     abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
     functionName: 'setAvatar',
   })
 
 /**
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `functionName` set to `"setTarget"`
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
  */
 export const useSimulateSubscriptionModuleSetTarget =
   /*#__PURE__*/ createUseSimulateContract({
     abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
     functionName: 'setTarget',
   })
 
 /**
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `functionName` set to `"setUp"`
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
  */
 export const useSimulateSubscriptionModuleSetUp =
   /*#__PURE__*/ createUseSimulateContract({
     abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
     functionName: 'setUp',
   })
 
 /**
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `functionName` set to `"subscribe"`
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
  */
 export const useSimulateSubscriptionModuleSubscribe =
   /*#__PURE__*/ createUseSimulateContract({
     abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
     functionName: 'subscribe',
   })
 
 /**
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `functionName` set to `"transferOwnership"`
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
  */
 export const useSimulateSubscriptionModuleTransferOwnership =
   /*#__PURE__*/ createUseSimulateContract({
     abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
     functionName: 'transferOwnership',
   })
 
 /**
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link subscriptionModuleAbi}__
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
  */
 export const useWatchSubscriptionModuleEvent =
-  /*#__PURE__*/ createUseWatchContractEvent({
-    abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
-  })
+  /*#__PURE__*/ createUseWatchContractEvent({ abi: subscriptionModuleAbi })
 
 /**
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `eventName` set to `"AvatarSet"`
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
  */
 export const useWatchSubscriptionModuleAvatarSetEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
     abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
     eventName: 'AvatarSet',
   })
 
 /**
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `eventName` set to `"Initialized"`
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
  */
 export const useWatchSubscriptionModuleInitializedEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
     abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
     eventName: 'Initialized',
   })
 
 /**
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `eventName` set to `"OwnershipTransferred"`
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
  */
 export const useWatchSubscriptionModuleOwnershipTransferredEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
     abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
     eventName: 'OwnershipTransferred',
   })
 
 /**
- * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `eventName` set to `"Redeemed"`
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
- */
-export const useWatchSubscriptionModuleRedeemedEvent =
-  /*#__PURE__*/ createUseWatchContractEvent({
-    abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
-    eventName: 'Redeemed',
-  })
-
-/**
- * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `eventName` set to `"SubscriptionCreated"`
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
- */
-export const useWatchSubscriptionModuleSubscriptionCreatedEvent =
-  /*#__PURE__*/ createUseWatchContractEvent({
-    abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
-    eventName: 'SubscriptionCreated',
-  })
-
-/**
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `eventName` set to `"TargetSet"`
- *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
  */
 export const useWatchSubscriptionModuleTargetSetEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
     abi: subscriptionModuleAbi,
-    address: subscriptionModuleAddress,
     eventName: 'TargetSet',
   })
