@@ -14,33 +14,11 @@ const getProjectId = (): string => {
   return projectId;
 };
 
-// Get chain ID from environment
-const getChainId = (): number => {
-  const chainId = process.env.NEXT_PUBLIC_CHAIN_ID;
-  if (!chainId) {
-    throw new Error("NEXT_PUBLIC_CHAIN_ID environment variable is required");
-  }
-  return parseInt(chainId, 10);
-};
-
-// Map chain IDs to chain objects
-const getChainFromId = (chainId: number) => {
-  switch (chainId) {
-    case 100:
-      return gnosis;
-    default:
-      throw new Error(`Unsupported chain ID: ${chainId}`);
-  }
-};
-
-const targetChainId = getChainId();
-const targetChain = getChainFromId(targetChainId);
-
-// RainbowKit configuration without auto-connect
+// RainbowKit configuration for Gnosis chain
 export const wagmiConfig = getDefaultConfig({
   appName: "Subscription Manager",
   projectId: getProjectId(),
-  chains: [targetChain],
+  chains: [gnosis],
   ssr: true,
 });
 
