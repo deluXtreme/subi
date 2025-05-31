@@ -56,7 +56,8 @@ contract SubscriptionModule is Module {
         onlyManager
         returns (uint256 subId)
     {
-        subId = subscriptionCounter++;
+        subId = subscriptionCounter;
+        subscriptionCounter++;
         // Initial lastRedeemed is 0 so first payment is immediately redeemable.
         subscriptions[subscriptionCounter] = Subscription(recipient, amount, 0, frequency);
     }
@@ -109,7 +110,7 @@ contract SubscriptionModule is Module {
                 abi.encodeWithSelector(
                     IHubV2.operateFlowMatrix.selector, flowVertices, flow, streams, packedCoordinates
                 ),
-                Enum.Operation.DelegateCall
+                Enum.Operation.Call
             ),
             CannotExec()
         );

@@ -5,7 +5,7 @@
   "chains": {
     "100": {
       "subscriptionManager": "0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57",
-      "subscriptionModuleMasterCopy": "0xeB5490C44cED3Fc1185fA53b48d86226a4ef79e3",
+      "subscriptionModuleMasterCopy": "0x32023a954E8a7D7C5Ff6823f82fc31072b64F9cE",
       "subscriptionModuleProxy": "0x0000000000000000000000000000000000000000",
       "safe": "0x0000000000000000000000000000000000000000"
     }
