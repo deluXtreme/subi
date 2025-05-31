@@ -1,44 +1,6 @@
 import { type Address, type Hash } from "viem";
-import { getClient, getSafe } from "./config";
-import {
-  buildModuleDeploymentTx,
-  buildEnableModuleTx,
-  buildRegisterManagerTx,
-  buildModuleApprovalTx,
-} from "./lib";
-import { HUB_ADDRESS } from "./constants";
-import type { MetaTransactionData } from "@safe-global/types-kit";
-
-export async function prepareEnableModuleTransactions(
-  safeAddress: Address,
-  managerAddress: Address,
-  salt: bigint = 110647465789069657756111682142268192901188952877020749627246931254533522453n,
-): Promise<MetaTransactionData[]> {
-  const client = getClient();
-
-  const { tx: deployModuleTx, predictedAddress: moduleProxyAddress } =
-    await buildModuleDeploymentTx(client, safeAddress, salt);
-
-  console.log(`Subscription Module address:`, moduleProxyAddress);
-
-  // Prepare the meta-transaction data object
-  const enableModuleTx = buildEnableModuleTx(safeAddress, moduleProxyAddress);
-  const registerModuleTx = buildRegisterManagerTx(
-    moduleProxyAddress,
-    managerAddress,
-  );
-  const moduleApprovalTx = buildModuleApprovalTx(
-    HUB_ADDRESS,
-    moduleProxyAddress,
-  );
-  console.log("Deploy Tx", deployModuleTx);
-  console.log("Enable Tx", enableModuleTx);
-  console.log("Register Tx", registerModuleTx);
-  console.log("Approval Tx", moduleApprovalTx);
-  console.log("Predicted Address", moduleProxyAddress);
-
-  return [deployModuleTx, enableModuleTx, registerModuleTx, moduleApprovalTx];
-}
+import { getSafe } from "./config";
+import { prepareEnableModuleTransactions } from "./lib";
 
 export async function batchInstall(
   safeAddress: Address,

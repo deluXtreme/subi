@@ -8,7 +8,6 @@ import {
   encodePacked,
   type Hex,
   getCreate2Address,
-  type PublicClient,
   http,
   createPublicClient,
 } from "viem";
@@ -16,23 +15,17 @@ import { type MetaTransactionData } from "@safe-global/types-kit";
 import { HUB_ADDRESS, MODULE_PROXY_FACTORY, SUBSCRIPTION_MASTER_COPY } from "./constants";
 import { gnosis } from "viem/chains";
 
-// TODO: Use Config.
-export const getClient = () => {
-  return createPublicClient({
-    chain: gnosis,
-    transport: http("https://rpc.gnosischain.com/"),
-  });
-};
+
+const defaultSalt = BigInt("110647465789069657756111682142268192901188952877020749627246931254533522453");
 
 export async function prepareEnableModuleTransactions(
   safeAddress: Address,
   managerAddress: Address,
-  salt: bigint = 110647465789069657756111682142268192901188952877020749627246931254533522453n,
+  salt: bigint = defaultSalt,
 ): Promise<MetaTransactionData[]> {
-  const client = getClient();
 
   const { tx: deployModuleTx, predictedAddress: moduleProxyAddress } =
-    await buildModuleDeploymentTx(client, safeAddress, salt);
+    await buildModuleDeploymentTx(safeAddress, salt);
 
   console.log(`Subscription Module address:`, moduleProxyAddress);
 
@@ -57,9 +50,8 @@ export async function prepareEnableModuleTransactions(
 
 
 export async function buildModuleDeploymentTx(
-  client: PublicClient,
   safeAddress: Address,
-  salt: bigint = 110647465789069657756111682142268192901188952877020749627246931254533522453n,
+  salt: bigint = defaultSalt,
 ): Promise<{ tx: MetaTransactionData; predictedAddress: Address }> {
   const initParams = encodeAbiParameters(
     parseAbiParameters("address x, address y, address z"),
@@ -94,7 +86,7 @@ export async function buildModuleDeploymentTx(
   };
 }
 
-export function buildEnableModuleTx(
+function buildEnableModuleTx(
   safeAddress: Address,
   moduleAddress: Address,
 ): MetaTransactionData {
@@ -113,7 +105,7 @@ export function buildEnableModuleTx(
   };
 }
 
-export function buildRegisterManagerTx(
+function buildRegisterManagerTx(
   moduleAddress: Address,
   managerAddress: Address,
 ): MetaTransactionData {
@@ -133,7 +125,7 @@ export function buildRegisterManagerTx(
 }
 
 
-export function buildModuleApprovalTx(
+function buildModuleApprovalTx(
   hubAddress: Address,
   moduleProxyAddress: Address,
 ): MetaTransactionData {
@@ -152,7 +144,7 @@ export function buildModuleApprovalTx(
   };
 }
 
-export function predictMinimalProxyAddress({
+function predictMinimalProxyAddress({
   factory,
   masterCopy,
   initializer,
@@ -188,11 +180,3 @@ export function predictMinimalProxyAddress({
     bytecodeHash,
   });
 }
-
-// export async function checkEnabled(
-//   safeAddress: string,
-//   moduleAddress: string,
-// ): Promise<boolean> {
-//   const safe = await getSafe(safeAddress);
-//   return safe.isModuleEnabled(moduleAddress);
-// }
