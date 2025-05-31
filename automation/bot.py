@@ -1,15 +1,17 @@
 import os
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import click
 import pandas as pd
+import psycopg2
+import psycopg2.extras
+import psycopg2.pool
 import requests
 from ape import Contract, accounts, chain
 from ape.types import LogFilter
 from ape_accounts import import_account_from_private_key
-from silverback import SilverbackBot, StateSnapshot
+from silverback import SilverbackBot
 
 # Instantiate bot
 bot = SilverbackBot()
@@ -21,12 +23,10 @@ PRIVATE_KEY = os.environ.get("PRIVATE_KEY")
 signer_account = import_account_from_private_key(ALIAS, PASSPHRASE, PRIVATE_KEY)
 signer_account.set_autosign(passphrase=PASSPHRASE, enabled=True)
 
-# File path configuration - use Path objects
-BLOCK_FILEPATH = Path(os.environ.get("BLOCK_FILEPATH", ".db/block.csv"))
-SUBSCRIPTIONS_FILEPATH = Path(os.environ.get("SUBSCRIPTIONS_FILEPATH", ".db/subscriptions.csv"))
 
 # Variables
 START_BLOCK = int(os.environ.get("START_BLOCK", chain.blocks.head.number))
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 # Addresses
 HUB_ADDRESS = "0xc12C1E50ABB450d6205Ea2C3Fa861b3B834d13e8"
@@ -37,65 +37,113 @@ hub = Contract(HUB_ADDRESS, abi="abi/Hub.json")
 subscription_manager = Contract(SUBSCRIPTION_MANAGER_ADDRESS, abi="abi/SubscriptionManager.json")
 
 
-# Block tracking functions
-def _load_block_db() -> int:
-    """Load the last processed block from CSV file or return START_BLOCK on any failure"""
-    try:
-        if BLOCK_FILEPATH.exists():
-            df = pd.read_csv(BLOCK_FILEPATH)
-            if not df.empty and "last_processed_block" in df.columns:
-                return int(df["last_processed_block"].iloc[0])
-    except Exception as e:
-        click.echo(f"Failed to load block DB, using START_BLOCK: {e}")
+# DB helpers that work with both temp connections and pools
+def _get_db_connection():
+    """Get a fresh database connection."""
+    return psycopg2.connect(DATABASE_URL)
 
-    return START_BLOCK
+
+def _load_block_db() -> int:
+    """Load last processed block from DB, fallback to START_BLOCK."""
+    conn = _get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("SELECT last_synced_block FROM sync_status WHERE name = 'main'")
+            row = cur.fetchone()
+            return int(row[0]) if row else START_BLOCK
+    except Exception as e:
+        click.echo(f"[DB] Failed to load sync block: {e}")
+        return START_BLOCK
+    finally:
+        conn.close()
 
 
 def _save_block_db(block_number: int) -> bool:
-    """Save the last processed block to CSV file, return success status"""
+    """Save the last processed block to sync_status."""
+    conn = _get_db_connection()
     try:
-        BLOCK_FILEPATH.parent.mkdir(parents=True, exist_ok=True)
-        pd.DataFrame({"last_processed_block": [block_number]}).to_csv(BLOCK_FILEPATH, index=False)
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO sync_status (name, last_synced_block)
+                VALUES ('main', %s)
+                ON CONFLICT (name) DO UPDATE SET last_synced_block = EXCLUDED.last_synced_block
+                """,
+                (block_number,),
+            )
+            conn.commit()
         return True
     except Exception as e:
-        click.echo(f"Failed to save block DB: {e}")
+        click.echo(f"[DB] Failed to save sync block: {e}")
+        conn.rollback()
         return False
+    finally:
+        conn.close()
 
 
-# Subscriptions tracking functions
 def _load_subscriptions_db() -> pd.DataFrame:
-    """Load subscriptions database from CSV file or return empty DataFrame on any failure"""
-    dtype = {
-        "block_number": int,
-        "sub_id": int,
-        "module": str,
-        "subscriber": str,
-        "recipient": str,
-        "amount": int,
-        "frequency": int,
-        "redeem_at": int,
-    }
-
+    """Load subscriptions into a DataFrame."""
+    conn = _get_db_connection()
     try:
-        if SUBSCRIPTIONS_FILEPATH.exists():
-            df = pd.read_csv(SUBSCRIPTIONS_FILEPATH, dtype=dtype)
-            if not df.empty:
-                return df
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("SELECT * FROM subscriptions")
+            rows = cur.fetchall()
+            return pd.DataFrame(rows)
     except Exception as e:
-        click.echo(f"Failed to load subscriptions DB, using empty DataFrame: {e}")
-
-    return pd.DataFrame(columns=dtype.keys()).astype(dtype)
+        click.echo(f"DB error loading subscriptions: {e}")
+        return pd.DataFrame()
+    finally:
+        conn.close()
 
 
 def _save_subscriptions_db(df: pd.DataFrame) -> bool:
-    """Save subscriptions to CSV file, return success status"""
+    """Upsert subscription entries into the database."""
+    if df.empty:
+        return True
+
+    conn = _get_db_connection()
     try:
-        SUBSCRIPTIONS_FILEPATH.parent.mkdir(parents=True, exist_ok=True)
-        df.to_csv(SUBSCRIPTIONS_FILEPATH, index=False)
+        with conn.cursor() as cur:
+            data = []
+            for _, row in df.iterrows():
+                data.append(
+                    (
+                        int(row["sub_id"]),
+                        str(row["module"]),
+                        str(row["subscriber"]),
+                        str(row["recipient"]),
+                        int(row["amount"]),
+                        int(row["frequency"]),
+                        int(row["redeem_at"]),
+                        int(row.get("created_block", row.get("block_number", 0))),
+                    )
+                )
+
+            cur.executemany(
+                """
+                INSERT INTO subscriptions (
+                    sub_id, module, subscriber, recipient,
+                    amount, frequency, redeem_at, created_block
+                )
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (sub_id, module) DO UPDATE SET
+                    subscriber = EXCLUDED.subscriber,
+                    recipient = EXCLUDED.recipient,
+                    amount = EXCLUDED.amount,
+                    frequency = EXCLUDED.frequency,
+                    redeem_at = EXCLUDED.redeem_at,
+                    created_block = EXCLUDED.created_block
+                """,
+                data,
+            )
+            conn.commit()
         return True
     except Exception as e:
-        click.echo(f"Failed to save subscriptions DB: {e}")
+        click.echo(f"DB error saving subscriptions: {e}")
+        conn.rollback()
         return False
+    finally:
+        conn.close()
 
 
 # Historical events helper functions
@@ -170,7 +218,6 @@ def _process_historical_subscription_creations(start_block: int, stop_block: int
     subscriptions_df = _load_subscriptions_db()
 
     subscriptions = _process_subscription_creation_logs(start_block, stop_block)
-
     _update_redemption_times(subscriptions, start_block, stop_block)
 
     if subscriptions:
@@ -178,7 +225,9 @@ def _process_historical_subscription_creations(start_block: int, stop_block: int
         updated_df = pd.concat([subscriptions_df, pd.DataFrame(subscriptions)], ignore_index=True)
         _save_subscriptions_db(updated_df)
     else:
-        click.echo(f"No historical subscription creations found in blocks {start_block}-{stop_block}")
+        click.echo(
+            f"No historical subscription creations found in blocks {start_block}-{stop_block}"
+        )
 
 
 def _catch_up_subscription_creations(current_block: int) -> None:
@@ -188,14 +237,20 @@ def _catch_up_subscription_creations(current_block: int) -> None:
     if current_block <= last_processed_block:
         return
 
-    click.echo(f"Catching up subscriptions from block {last_processed_block + 1} to {current_block}")
-    _process_historical_subscription_creations(start_block=last_processed_block + 1, stop_block=current_block)
+    click.echo(
+        f"Catching up subscriptions from block {last_processed_block + 1} to {current_block}"
+    )
+    _process_historical_subscription_creations(
+        start_block=last_processed_block + 1, stop_block=current_block
+    )
 
 
 # Subscription processing helper functions
 def _get_sub_module_pairs_from_df(subscriptions_df: pd.DataFrame) -> List[Tuple[int, str]]:
     """Extract unique (sub_id, module) pairs from dataframe"""
-    return list(subscriptions_df[["sub_id", "module"]].drop_duplicates().itertuples(index=False, name=None))
+    return list(
+        subscriptions_df[["sub_id", "module"]].drop_duplicates().itertuples(index=False, name=None)
+    )
 
 
 # Pathfinder and flow matrix utilities
@@ -268,7 +323,9 @@ def transform_to_flow_vertices(
     return sorted_addresses, idx
 
 
-def create_flow_matrix(from_addr: str, to_addr: str, value: str, transfers: List[TransferStep]) -> Optional[FlowMatrix]:
+def create_flow_matrix(
+    from_addr: str, to_addr: str, value: str, transfers: List[TransferStep]
+) -> Optional[FlowMatrix]:
     """Create flow matrix, return None on validation failure"""
     sender = from_addr.lower()
     receiver = to_addr.lower()
@@ -329,7 +386,10 @@ def create_abi_flow_matrix(
         return None
 
     flow_edges_tuples = [(edge.stream_sink_id, int(edge.amount)) for edge in flow_matrix.flow_edges]
-    streams_tuples = [(stream.source_coordinate, stream.flow_edge_ids, stream.data) for stream in flow_matrix.streams]
+    streams_tuples = [
+        (stream.source_coordinate, stream.flow_edge_ids, stream.data)
+        for stream in flow_matrix.streams
+    ]
     packed_coords_hex = "0x" + flow_matrix.packed_coordinates.hex()
 
     return (
@@ -368,7 +428,9 @@ def find_circles_path_and_parse(
     """Find a payment path and return empty list on failure"""
     params = [{"Source": source, "Sink": sink, "TargetFlow": target_flow, "WithWrap": with_wrap}]
 
-    pathfinder_response = make_jsonrpc_request(url=pathfinder_url, method="circlesV2_findPath", params=params)
+    pathfinder_response = make_jsonrpc_request(
+        url=pathfinder_url, method="circlesV2_findPath", params=params
+    )
 
     if not pathfinder_response or "result" not in pathfinder_response:
         return []
@@ -410,7 +472,9 @@ def _redeem(sub_id: int, module: str, subscriber: str, recipient: str, amount: i
 
         click.echo(f"Found {len(transfers)} transfer steps for sub {sub_id}")
 
-        result = create_abi_flow_matrix(from_addr=subscriber, to_addr=recipient, value=amount_str, transfers=transfers)
+        result = create_abi_flow_matrix(
+            from_addr=subscriber, to_addr=recipient, value=amount_str, transfers=transfers
+        )
 
         if result is None:
             click.echo(f"Flow matrix creation failed for sub {sub_id}")
@@ -448,15 +512,23 @@ def _redeem(sub_id: int, module: str, subscriber: str, recipient: str, amount: i
         return False
 
 
-# Event watching
+# Event watching with proper startup handling
 @bot.on_startup()
-def bot_startup(startup_state: StateSnapshot):
+def bot_startup(startup_state):
+    """Process any events missed while the bot was offline."""
     last_processed_block = _load_block_db()
     current_block = chain.blocks.head.number
 
     click.echo(f"Starting from block {last_processed_block}, current block {current_block}")
 
-    _catch_up_subscription_creations(current_block)
+    if current_block > last_processed_block:
+        click.echo(
+            f"Catching up subscriptions from block {last_processed_block + 1} to {current_block}"
+        )
+        _process_historical_subscription_creations(
+            start_block=last_processed_block + 1, stop_block=current_block
+        )
+
     _save_block_db(current_block)
 
 
@@ -474,28 +546,27 @@ def handle_subscription_creation(log):
         "redeem_at": 0,
     }
 
-    subscription_df = pd.concat([subscriptions_df, pd.DataFrame([new_subscription])], ignore_index=True)
+    subscription_df = pd.concat(
+        [subscriptions_df, pd.DataFrame([new_subscription])], ignore_index=True
+    )
     _save_subscriptions_db(subscription_df)
-
     click.echo(f"Sub {log.subId} created on {log.module}")
 
 
 @bot.on_(subscription_manager.Redeemed)
 def handle_redemption(log):
     subscriptions_df = _load_subscriptions_db()
-
     mask = (subscriptions_df["sub_id"] == log.subId) & (subscriptions_df["module"] == log.module)
     subscriptions_df.loc[mask, "redeem_at"] = log.nextRedeemAt
-
     _save_subscriptions_db(subscriptions_df)
-
-    click.echo(f"Redemption completed {log.subId} on module {log.module}, next redeem: {log.nextRedeemAt}")
+    click.echo(
+        f"Redemption completed {log.subId} on module {log.module}, next redeem: {log.nextRedeemAt}"
+    )
 
 
 @bot.on_(chain.blocks)
 def handle_subscriptions(block):
-    _save_block_db(block.number)
-
+    bot.state.last_processed_block = block.number
     subscriptions_df = _load_subscriptions_db()
 
     if subscriptions_df.empty:
@@ -516,4 +587,16 @@ def handle_subscriptions(block):
             _redeem(sub_id, module, sub_row["subscriber"], sub_row["recipient"], sub_row["amount"])
         else:
             time_until_next = sub_row["redeem_at"] - block.timestamp
-            click.echo(f"Sub {sub_id} on {module} not due yet. Time remaining: {time_until_next} seconds")
+            click.echo(
+                f"Sub {sub_id} on {module} not due yet. Time remaining: {time_until_next} seconds"
+            )
+
+
+@bot.on_shutdown()
+def shutdown_bot():
+    click.echo("[Bot] Shutdown triggered.")
+    block = getattr(bot.state, "last_processed_block", None)
+    if block is not None:
+        success = _save_block_db(block)
+        if success:
+            click.echo(f"[DB] Saved final block {block} to DB.")
