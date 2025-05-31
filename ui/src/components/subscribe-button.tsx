@@ -2,9 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useAccount, useWaitForTransactionReceipt } from "wagmi";
-import { useWriteSubscriptionModuleSubscribe } from "@/generated";
+import { useWriteSubscriptionManagerSubscribe, useReadSubscriptionManagerModules } from "@/generated";
 import { getTransactionUrl } from "@/lib/blockscout";
-import { useSafeModule } from "@/hooks/use-safe-module";
 
 interface SubscribeButtonProps {
   recipient?: string;
@@ -25,26 +24,32 @@ export function SubscribeButton({
     data: hash,
     error,
     isPending,
-  } = useWriteSubscriptionModuleSubscribe();
+  } = useWriteSubscriptionManagerSubscribe();
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({ hash });
   const [mounted, setMounted] = useState(false);
-  
-  const {
-    isModuleInstalled,
-    isCheckingModule,
-    isSafeWallet,
-    isCheckingSafe,
-    error: moduleError,
-    recheckModule,
-  } = useSafeModule();
+
+  // Get the user's registered module address
+  const { 
+    data: userModuleAddress, 
+    isLoading: isLoadingModule,
+    error: moduleAddressError 
+  } = useReadSubscriptionManagerModules({
+    args: address ? [address] : undefined,
+    query: {
+      enabled: !!address,
+    },
+  });
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  // Check if user has a module installed (non-zero address)
+  const hasModuleInstalled = userModuleAddress && userModuleAddress !== '0x0000000000000000000000000000000000000000';
+
   const handleSubscribe = async () => {
-    if (!address) return;
+    if (!address || !hasModuleInstalled) return;
 
     try {
       writeContract({
@@ -84,39 +89,13 @@ export function SubscribeButton({
     );
   }
 
-  // Checking if it's a Safe wallet
-  if (isCheckingSafe) {
-    return (
-      <div className={`space-y-4 ${className}`}>
-        <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-blue-800 text-sm">
-            🔍 Checking if connected wallet is a Safe...
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  // Not a Safe wallet
-  if (isSafeWallet === false) {
-    return (
-      <div className={`space-y-4 ${className}`}>
-        <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-red-800 text-sm">
-            ❌ This app only works with Safe wallets. Please connect through a Safe interface.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   // Checking module installation
-  if (isCheckingModule) {
+  if (isLoadingModule) {
     return (
       <div className={`space-y-4 ${className}`}>
         <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-blue-800 text-sm">
-            🔍 Checking if SubscriptionModule is installed on your Safe...
+          <p className="text-circles-primary text-sm font-medium">
+            🔍 Checking if you have a subscription module registered...
           </p>
         </div>
       </div>
@@ -124,44 +103,38 @@ export function SubscribeButton({
   }
 
   // Module check error
-  if (moduleError) {
+  if (moduleAddressError) {
     return (
       <div className={`space-y-4 ${className}`}>
         <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
           <p className="text-red-800 text-sm">
-            ❌ Error checking module: {moduleError}
+            ❌ Error checking module: {moduleAddressError.message}
           </p>
-          <button
-            onClick={recheckModule}
-            className="mt-2 px-3 py-1 text-xs bg-red-100 hover:bg-red-200 text-red-800 rounded"
-          >
-            Retry Check
-          </button>
         </div>
       </div>
     );
   }
 
   // Module not installed
-  if (isModuleInstalled === false) {
+  if (!hasModuleInstalled) {
     return (
       <div className={`space-y-4 ${className}`}>
-        <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <p className="text-yellow-800 text-sm">
-            ⚠️ SubscriptionModule is not installed on your Safe
+        <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
+          <p className="text-circles-accent text-sm font-medium">
+            ⚠️ No subscription module found for your address
           </p>
-          <p className="text-yellow-700 text-xs mt-1">
-            You need to install the SubscriptionModule as a Zodiac module first.
+          <p className="text-gray-600 text-xs mt-1">
+            You need to register a subscription module first.
           </p>
         </div>
         <button
           onClick={() => {
-            // TODO: Implement module installation flow
-            alert('Module installation not yet implemented. Please install the SubscriptionModule manually through your Safe interface.')
+            // TODO: Implement module registration flow
+            alert('Module registration not yet implemented. Please register a subscription module first.')
           }}
-          className="px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-medium transition-colors"
+          className="px-6 py-3 bg-circles-accent hover:bg-circles-accent text-white rounded-lg font-bold transition-colors"
         >
-          Install SubscriptionModule
+          Register Module
         </button>
       </div>
     );
@@ -171,15 +144,18 @@ export function SubscribeButton({
   return (
     <div className={`space-y-4 ${className}`}>
       <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-        <p className="text-green-800 text-sm">
-          ✅ SubscriptionModule is installed! You can create subscriptions.
+        <p className="text-green-700 text-sm font-medium">
+          ✅ Subscription module found! You can create subscriptions.
+        </p>
+        <p className="text-gray-600 text-xs mt-1 font-mono">
+          Module: {userModuleAddress}
         </p>
       </div>
 
       <button
         onClick={handleSubscribe}
         disabled={isPending || isConfirming}
-        className={`px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors ${
+        className={`px-6 py-3 bg-circles-primary hover:bg-circles-primary text-white rounded-lg font-bold transition-colors ${
           isPending || isConfirming ? "opacity-50 cursor-not-allowed" : ""
         }`}
       >
@@ -192,19 +168,19 @@ export function SubscribeButton({
 
       {error && (
         <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-red-800 text-sm">❌ Error: {error.message}</p>
+          <p className="text-red-700 text-sm font-medium">❌ Error: {error.message}</p>
         </div>
       )}
 
       {hash && isConfirming && (
         <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-blue-800 text-sm">
+          <p className="text-circles-primary text-sm font-medium">
             ⏳ Transaction submitted. Waiting for confirmation...{" "}
             <a
               href={getTransactionUrl(hash)}
               target="_blank"
               rel="noopener noreferrer"
-              className="underline hover:no-underline"
+              className="text-circles-accent underline hover:no-underline font-semibold"
             >
               View transaction
             </a>
@@ -214,18 +190,18 @@ export function SubscribeButton({
 
       {isConfirmed && (
         <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-          <p className="text-green-800 text-sm">
+          <p className="text-green-700 text-sm font-medium">
             ✅ Subscription created successfully!{" "}
             <a
               href={getTransactionUrl(hash!)}
               target="_blank"
               rel="noopener noreferrer"
-              className="underline hover:no-underline"
+              className="text-circles-accent underline hover:no-underline font-semibold"
             >
               View transaction
             </a>
           </p>
-          <p className="text-green-700 text-xs mt-1">
+          <p className="text-gray-600 text-xs mt-1">
             Recipients can now redeem payments when they become due.
           </p>
         </div>

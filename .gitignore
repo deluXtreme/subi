@@ -23,3 +23,5 @@ docs/
 
 # Silverback sessions
 automation/.silverback-sessions/
+
+.DS_Store
