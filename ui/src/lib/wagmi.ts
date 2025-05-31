@@ -1,11 +1,4 @@
-import {
-  mainnet,
-  sepolia,
-  polygon,
-  arbitrum,
-  optimism,
-  gnosis,
-} from "wagmi/chains";
+import { gnosis } from "wagmi/chains";
 import { QueryClient } from "@tanstack/react-query";
 import { getDefaultConfig } from "@rainbow-me/rainbowkit";
 
@@ -33,16 +26,6 @@ const getChainId = (): number => {
 // Map chain IDs to chain objects
 const getChainFromId = (chainId: number) => {
   switch (chainId) {
-    case 1:
-      return mainnet;
-    case 11155111:
-      return sepolia;
-    case 137:
-      return polygon;
-    case 42161:
-      return arbitrum;
-    case 10:
-      return optimism;
     case 100:
       return gnosis;
     default:

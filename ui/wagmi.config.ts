@@ -1,18 +1,18 @@
-import { defineConfig } from '@wagmi/cli'
-import { foundry, react } from '@wagmi/cli/plugins'
+import { defineConfig } from "@wagmi/cli";
+import { foundry, react } from "@wagmi/cli/plugins";
 
 export default defineConfig({
-  out: 'src/generated.ts',
+  out: "src/generated.ts",
   contracts: [],
   plugins: [
     foundry({
-      project: '../contracts',
+      project: "../contracts",
       deployments: {
         SubscriptionModule: {
-          100: '0xd1F11A260720010D43587317CF8Dad46aF129744', // Gnosis Chain
+          100: "0x01E65042f8CE628f07bba35c97883825e7B97c2f", // Gnosis Chain
         },
       },
     }),
     react(),
   ],
-})
+});
