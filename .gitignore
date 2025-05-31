@@ -17,8 +17,9 @@ docs/
 # Virtual env
 .venv
 
-# Python bytecode
-automation/__pycache__/
+# Python cache files
+**/__pycache__/
+*.pyc
 
 # Silverback sessions
 automation/.silverback-sessions/
