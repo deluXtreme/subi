@@ -2,9 +2,10 @@
 pragma solidity ^0.8.28;
 
 import {Test} from "forge-std/Test.sol";
-import {SubscriptionModule} from "../src/SubscriptionModule.sol";
-import {TypeDefinitions} from "@circles/src/hub/TypeDefinitions.sol";
+import {SubscriptionModule} from "src/SubscriptionModule.sol";
+import {SubscriptionManager} from "src/SubscriptionManager.sol";
 import {ByteSlice} from "src/libraries/ByteSlice.sol";
+import {TypeDefinitions} from "@circles/src/hub/TypeDefinitions.sol";
 
 contract ExposedSubscriptionModule is SubscriptionModule {
     constructor(address _owner, address _avatar, address _target) SubscriptionModule(_owner, _avatar, _target) {}
@@ -21,6 +22,7 @@ contract ExposedSubscriptionModule is SubscriptionModule {
 contract SubscriptionModuleTest is Test {
     using ByteSlice for bytes;
 
+    SubscriptionManager public manager;
     ExposedSubscriptionModule public subscriptionModule;
     address public owner;
     address public avatar;
@@ -33,10 +35,18 @@ contract SubscriptionModuleTest is Test {
         target = makeAddr("target");
         recipient = 0xcF6Dc192dc292D5F2789DA2DB02D6dD4f41f4214;
 
-        vm.startPrank(owner);
+        manager = new SubscriptionManager();
+
+        vm.startPrank(address(owner));
         subscriptionModule = new ExposedSubscriptionModule(owner, avatar, target);
-        subscriptionModule.subscribe(recipient, 1e12, 3600);
+        manager.registerModule(address(subscriptionModule));
+        // manager.subscribe(recipient, 1e12, 3600);
         vm.stopPrank();
+    }
+
+    function test_Subscribe() external {
+        vm.startPrank(address(owner));
+        manager.subscribe(recipient, 1e12, 3600);
     }
 
     function testExtractRecipient() public view {

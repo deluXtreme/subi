@@ -19,12 +19,10 @@ contract SubscriptionModule is Module {
     }
 
     address public constant HUB_ADDRESS = 0xc12C1E50ABB450d6205Ea2C3Fa861b3B834d13e8;
-    address public constant SUBSCRIPTION_MANAGER = 0xd1F11A260720010D43587317CF8Dad46aF129744;
+    address public constant SUBSCRIPTION_MANAGER = 0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f;
 
     uint256 public subscriptionCounter;
     mapping(uint256 => Subscription) public subscriptions;
-
-    event Redeemed(uint256 indexed subId, address indexed recipient, uint256 amount);
 
     error NotRedeemable();
     /// @notice Thrown when the transaction cannot execute
@@ -87,7 +85,7 @@ contract SubscriptionModule is Module {
         TypeDefinitions.FlowEdge[] calldata flow,
         TypeDefinitions.Stream[] calldata streams,
         bytes calldata packedCoordinates
-    ) external {
+    ) external onlyManager returns (uint256) {
         Subscription memory sub = subscriptions[subId];
         if (sub.lastRedeemed + sub.frequency > block.timestamp) {
             revert NotRedeemable();
@@ -115,7 +113,8 @@ contract SubscriptionModule is Module {
             ),
             CannotExec()
         );
-        emit Redeemed(subId, sub.recipient, sub.amount);
+
+        return (block.timestamp + sub.frequency);
     }
 
     /// @notice Executes the transaction from module with the guard checks

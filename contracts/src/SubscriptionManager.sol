@@ -3,6 +3,7 @@ pragma solidity ^0.8.28;
 
 import {ISubscriptionModule} from "src/ISubscriptionModule.sol";
 import {EnumerableSetLib} from "@solady/src/utils/EnumerableSetLib.sol";
+import {TypeDefinitions} from "@circles/src/hub/TypeDefinitions.sol";
 
 contract SubscriptionManager {
     /*//////////////////////////////////////////////////////////////
@@ -32,11 +33,13 @@ contract SubscriptionManager {
         uint256 frequency
     );
 
+    event Redeemed(uint256 indexed subId, address indexed module, uint256 indexed nextRedeemAt);
+
     /*//////////////////////////////////////////////////////////////
                    USER-FACING NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
-    function enableModule(address module) external {
+    function registerModule(address module) external {
         require(msg.sender == ISubscriptionModule(module).owner());
         modules[msg.sender] = module;
         allModules.add(module);
@@ -46,9 +49,22 @@ contract SubscriptionManager {
         address module = modules[msg.sender];
         require(msg.sender == ISubscriptionModule(module).owner());
 
-        uint256 subId = ISubscriptionModule(module).subscribeV2(recipient, amount, frequency);
+        uint256 subId = ISubscriptionModule(module).subscribe(recipient, amount, frequency);
 
         emit SubscriptionCreated(subId, module, msg.sender, recipient, amount, frequency);
+    }
+
+    function redeemPayment(
+        address module,
+        uint256 subId,
+        address[] calldata flowVertices,
+        TypeDefinitions.FlowEdge[] calldata flow,
+        TypeDefinitions.Stream[] calldata streams,
+        bytes calldata packedCoordinates
+    ) external {
+        uint256 nextRedeemAt =
+            ISubscriptionModule(module).redeemPayment(subId, flowVertices, flow, streams, packedCoordinates);
+        emit Redeemed(subId, module, nextRedeemAt);
     }
 
     /*//////////////////////////////////////////////////////////////
