@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
-import {Enum} from "lib/safe-smart-account/contracts/common/Enum.sol";
-import {Module} from "lib/zodiac/contracts/core/Module.sol";
-import {IAvatar} from "lib/zodiac/contracts/interfaces/IAvatar.sol";
-import {TypeDefinitions} from "lib/circles-contracts-v2/src/hub/TypeDefinitions.sol";
-import {IHubV2} from "lib/circles-contracts-v2/src/hub/IHub.sol";
+import {Enum} from "@safe-smart-account/contracts/common/Enum.sol";
+import {Module} from "@zodiac/contracts/core/Module.sol";
+import {IAvatar} from "@zodiac/contracts/interfaces/IAvatar.sol";
+import {TypeDefinitions} from "@circles/src/hub/TypeDefinitions.sol";
+import {IHubV2} from "@circles/src/hub/IHub.sol";
 import {ByteSlice} from "src/libraries/ByteSlice.sol";
 
 contract SubscriptionModule is Module {
@@ -23,7 +23,9 @@ contract SubscriptionModule is Module {
     uint256 public subscriptionCounter;
     mapping(uint256 => Subscription) public subscriptions;
 
-    event SubscriptionCreated(address indexed recipient, uint256 indexed subId, uint256 amount, uint256 frequency);
+    event SubscriptionCreated(
+        address indexed subscriber, address indexed recipient, uint256 indexed subId, uint256 amount, uint256 frequency
+    );
     event Redeemed(uint256 indexed subId, address indexed recipient, uint256 amount);
 
     error NotRedeemable();
@@ -52,7 +54,7 @@ contract SubscriptionModule is Module {
         subscriptionCounter++;
         // Initial lastRedeemed is 0 so first payment is immediately redeemable.
         subscriptions[subscriptionCounter] = Subscription(recipient, amount, 0, frequency);
-        emit SubscriptionCreated(recipient, subscriptionCounter, amount, frequency);
+        emit SubscriptionCreated(msg.sender, recipient, subscriptionCounter, amount, frequency);
     }
 
     function _extractRecipient(bytes calldata coordinates, address[] calldata flowVertices)
