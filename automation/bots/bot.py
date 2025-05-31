@@ -117,9 +117,7 @@ def _process_historical_proxy_creations(start_block: int, stop_block: int) -> No
 
     if proxy_creations:
         click.echo(f"Found {len(proxy_creations)} historical proxy creations")
-        module_df = pd.concat(
-            [module_addresses_df, pd.DataFrame(proxy_creations)], ignore_index=True
-        )
+        module_df = pd.concat([module_addresses_df, pd.DataFrame(proxy_creations)], ignore_index=True)
         _save_module_addresses_db(module_df)
     else:
         click.echo(f"No historical proxy creations found in blocks {start_block}-{stop_block}")
@@ -132,12 +130,8 @@ def _catch_up_proxy_creations(current_block: int) -> None:
     if current_block <= last_processed_block:
         return
 
-    click.echo(
-        f"Catching up proxy creations from block {last_processed_block + 1} to {current_block}"
-    )
-    _process_historical_proxy_creations(
-        start_block=last_processed_block + 1, stop_block=current_block
-    )
+    click.echo(f"Catching up proxy creations from block {last_processed_block + 1} to {current_block}")
+    _process_historical_proxy_creations(start_block=last_processed_block + 1, stop_block=current_block)
 
 
 # Event watching
