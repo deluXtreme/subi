@@ -28,7 +28,7 @@ export async function batchInstall(
   console.log("Deploy Tx", deployModuleTx);
   console.log("Enable Tx", enableModuleTx);
   console.log("Register Tx", registerModuleTx);
-
+  console.log("Predicted Address", predictedAddress);
   // Build the Safe transaction
   const safe = await getSafe(safeAddress);
   const safeModuleTx = await safe.createTransaction({

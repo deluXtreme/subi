@@ -12,6 +12,7 @@ import {
 } from "viem";
 import { type MetaTransactionData } from "@safe-global/types-kit";
 import { MODULE_PROXY_FACTORY, SUBSCRIPTION_MASTER_COPY } from "./constants";
+import { getSafe } from "./config";
 
 export async function buildModuleDeploymentTx(
   client: PublicClient,
@@ -36,24 +37,17 @@ export async function buildModuleDeploymentTx(
     args: [SUBSCRIPTION_MASTER_COPY, initData, salt],
   });
   const factoryAddress = MODULE_PROXY_FACTORY;
-  const proxyCreationCode = await client.readContract({
-    address: factoryAddress,
-    abi: parseAbi(["function proxyCreationCode() view returns (bytes)"]),
-    functionName: "proxyCreationCode",
-  });
-
   return {
     tx: {
       to: factoryAddress.toString(),
       value: "0",
       data: deployData,
     },
-    predictedAddress: await predictModuleAddress({
-      factory: factoryAddress,
+    predictedAddress: await predictMinimalProxyAddress({
+      factory: MODULE_PROXY_FACTORY,
       masterCopy: SUBSCRIPTION_MASTER_COPY,
+      initializer: initData, // as you've built above
       saltNonce: salt,
-      initializer: initData,
-      proxyCreationCode,
     }),
   };
 }
@@ -96,22 +90,18 @@ export function buildRegisterManagerTx(
   };
 }
 
-/**
- * Predicts the address of a module deployed via ModuleProxyFactory.deployModule(...)
- */
-export async function predictModuleAddress({
+export function predictMinimalProxyAddress({
   factory,
   masterCopy,
   initializer,
   saltNonce,
-  proxyCreationCode,
 }: {
   factory: Address;
   masterCopy: Address;
   initializer: Hex;
   saltNonce: bigint | number;
-  proxyCreationCode: Hex;
-}): Promise<Address> {
+}): Address {
+  // Salt: keccak256(abi.encodePacked(keccak256(initializer), saltNonce))
   const salt = keccak256(
     encodePacked(
       ["bytes32", "uint256"],
@@ -119,15 +109,28 @@ export async function predictModuleAddress({
     ),
   );
 
+  // Minimal proxy init code with masterCopy embedded
+  const prefix = "0x602d8060093d393df3363d3d373d3d3d363d73";
+  const suffix = "0x5af43d82803e903d91602b57fd5bf3";
+
   const initCode = encodePacked(
-    ["bytes", "uint256"],
-    [
-      proxyCreationCode, // from `proxyCreationCode()`
-      BigInt(masterCopy),
-    ],
+    ["bytes", "address", "bytes"],
+    [prefix, masterCopy, suffix],
   );
 
   const bytecodeHash = keccak256(initCode);
 
-  return getCreate2Address({ from: factory, salt, bytecodeHash });
+  return getCreate2Address({
+    from: factory,
+    salt,
+    bytecodeHash,
+  });
+}
+
+export async function checkEnabled(
+  safeAddress: string,
+  moduleAddress: string,
+): Promise<boolean> {
+  const safe = await getSafe(safeAddress);
+  return safe.isModuleEnabled(moduleAddress);
 }
