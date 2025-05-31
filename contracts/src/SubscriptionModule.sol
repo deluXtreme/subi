@@ -63,7 +63,7 @@ contract SubscriptionModule is Module {
         returns (address)
     {
         uint256 length = coordinates.length;
-        return flowVertices[coordinates.toInt(length - 2, length - 1)];
+        return flowVertices[coordinates.toInt(length - 2, length)];
     }
 
     function _extractAmount(TypeDefinitions.FlowEdge[] calldata flow) internal pure returns (uint256 amount) {

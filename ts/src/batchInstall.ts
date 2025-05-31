@@ -2,7 +2,7 @@ import { type Address, type Hash } from "viem";
 import { getClient, getSafe } from "./config";
 import { buildModuleDeploymentTx, buildEnableModuleTx } from "./lib";
 
-export async function deployModule(
+export async function batchInstall(
   safeAddress: Address,
   salt: bigint = 110647465789069657756111682142268192901188952877020749627246931254533522453n,
 ): Promise<{ moduleAddress: Address; enableHash: Hash }> {
