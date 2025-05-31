@@ -173,9 +173,7 @@ def _process_historical_subscription_creations(start_block: int, stop_block: int
         updated_df = pd.concat([subscriptions_df, pd.DataFrame(subscriptions)], ignore_index=True)
         _save_subscriptions_db(updated_df)
     else:
-        click.echo(
-            f"No historical subscription creations found in blocks {start_block}-{stop_block}"
-        )
+        click.echo(f"No historical subscription creations found in blocks {start_block}-{stop_block}")
 
 
 def _catch_up_subscription_creations(current_block: int) -> None:
@@ -185,20 +183,14 @@ def _catch_up_subscription_creations(current_block: int) -> None:
     if current_block <= last_processed_block:
         return
 
-    click.echo(
-        f"Catching up subscriptions from block {last_processed_block + 1} to {current_block}"
-    )
-    _process_historical_subscription_creations(
-        start_block=last_processed_block + 1, stop_block=current_block
-    )
+    click.echo(f"Catching up subscriptions from block {last_processed_block + 1} to {current_block}")
+    _process_historical_subscription_creations(start_block=last_processed_block + 1, stop_block=current_block)
 
 
 # Subscription processing helper functions
 def _get_sub_module_pairs_from_df(subscriptions_df: pd.DataFrame) -> List[Tuple[int, str]]:
     """Extract unique (sub_id, module) pairs from dataframe"""
-    return list(
-        subscriptions_df[["sub_id", "module"]].drop_duplicates().itertuples(index=False, name=None)
-    )
+    return list(subscriptions_df[["sub_id", "module"]].drop_duplicates().itertuples(index=False, name=None))
 
 
 # Pathfinder and flow matrix utilities
@@ -271,9 +263,7 @@ def transform_to_flow_vertices(
     return sorted_addresses, idx
 
 
-def create_flow_matrix(
-    from_addr: str, to_addr: str, value: str, transfers: List[TransferStep]
-) -> Optional[FlowMatrix]:
+def create_flow_matrix(from_addr: str, to_addr: str, value: str, transfers: List[TransferStep]) -> Optional[FlowMatrix]:
     """Create flow matrix, return None on validation failure"""
     sender = from_addr.lower()
     receiver = to_addr.lower()
@@ -334,10 +324,7 @@ def create_abi_flow_matrix(
         return None
 
     flow_edges_tuples = [(edge.stream_sink_id, int(edge.amount)) for edge in flow_matrix.flow_edges]
-    streams_tuples = [
-        (stream.source_coordinate, stream.flow_edge_ids, stream.data)
-        for stream in flow_matrix.streams
-    ]
+    streams_tuples = [(stream.source_coordinate, stream.flow_edge_ids, stream.data) for stream in flow_matrix.streams]
     packed_coords_hex = "0x" + flow_matrix.packed_coordinates.hex()
 
     return (
@@ -376,9 +363,7 @@ def find_circles_path_and_parse(
     """Find a payment path and return empty list on failure"""
     params = [{"Source": source, "Sink": sink, "TargetFlow": target_flow, "WithWrap": with_wrap}]
 
-    pathfinder_response = make_jsonrpc_request(
-        url=pathfinder_url, method="circlesV2_findPath", params=params
-    )
+    pathfinder_response = make_jsonrpc_request(url=pathfinder_url, method="circlesV2_findPath", params=params)
 
     if not pathfinder_response or "result" not in pathfinder_response:
         return []
@@ -420,15 +405,25 @@ def _redeem(sub_id: int, module: str, subscriber: str, recipient: str, amount: i
 
         click.echo(f"Found {len(transfers)} transfer steps for sub {sub_id}")
 
-        result = create_abi_flow_matrix(
-            from_addr=subscriber, to_addr=recipient, value=amount_str, transfers=transfers
-        )
+        result = create_abi_flow_matrix(from_addr=subscriber, to_addr=recipient, value=amount_str, transfers=transfers)
 
         if result is None:
             click.echo(f"Flow matrix creation failed for sub {sub_id}")
             return False
 
         flow_vertices, flow_edges, streams, packed_coordinates = result
+
+        # DEBUG: Print all transaction parameters
+        click.echo(f"=== TRANSACTION DEBUG INFO FOR SUB {sub_id} ===")
+        click.echo(f"module: {module}")
+        click.echo(f"sub_id: {sub_id}")
+        click.echo(f"flow_vertices ({len(flow_vertices)} items): {flow_vertices}")
+        click.echo(f"flow_edges ({len(flow_edges)} items): {flow_edges}")
+        click.echo(f"streams ({len(streams)} items): {streams}")
+        click.echo(f"packed_coordinates: {packed_coordinates}")
+        click.echo(f"packed_coordinates length: {len(packed_coordinates)} chars")
+        click.echo(f"sender: {bot.signer.address}")
+        click.echo("=== END DEBUG INFO ===")
 
         subscription_manager.redeemPayment(
             module,
@@ -474,9 +469,7 @@ def handle_subscription_creation(log):
         "redeem_at": 0,
     }
 
-    subscription_df = pd.concat(
-        [subscriptions_df, pd.DataFrame([new_subscription])], ignore_index=True
-    )
+    subscription_df = pd.concat([subscriptions_df, pd.DataFrame([new_subscription])], ignore_index=True)
     _save_subscriptions_db(subscription_df)
 
     click.echo(f"Sub {log.subId} created on {log.module}")
@@ -492,9 +485,7 @@ def handle_redemption(log):
 
     _save_subscriptions_db(subscriptions_df)
 
-    click.echo(
-        f"Redemption completed {log.subId} on module {log.module}, next redeem: {log.nextRedeemAt}"
-    )
+    click.echo(f"Redemption completed {log.subId} on module {log.module}, next redeem: {log.nextRedeemAt}")
 
 
 @bot.on_(chain.blocks)
@@ -521,6 +512,4 @@ def handle_subscriptions(block):
             _redeem(sub_id, module, sub_row["subscriber"], sub_row["recipient"], sub_row["amount"])
         else:
             time_until_next = sub_row["redeem_at"] - block.timestamp
-            click.echo(
-                f"Sub {sub_id} on {module} not due yet. Time remaining: {time_until_next} seconds"
-            )
+            click.echo(f"Sub {sub_id} on {module} not due yet. Time remaining: {time_until_next} seconds")
