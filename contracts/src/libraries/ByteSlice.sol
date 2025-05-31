@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
-import {LibBytes} from "lib/solady/src/utils/LibBytes.sol";
+import {LibBytes} from "@solady/src/utils/LibBytes.sol";
 
 library ByteSlice {
     using LibBytes for bytes;
