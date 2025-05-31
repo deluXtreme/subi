@@ -2,25 +2,255 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #1a1a1a;
+  --circles-primary: #251B9F;
+  --circles-accent: #FF491B;
+  --circles-primary-light: #3b2fb5;
+  --circles-primary-dark: #1a1575;
+  --circles-accent-light: #ff6340;
+  --circles-accent-dark: #e63d14;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-dm-sans);
+  --font-mono: var(--font-dm-mono);
+  
+  /* Circles brand colors */
+  --color-circles-primary: var(--circles-primary);
+  --color-circles-accent: var(--circles-accent);
+  --color-circles-primary-light: var(--circles-primary-light);
+  --color-circles-primary-dark: var(--circles-primary-dark);
+  --color-circles-accent-light: var(--circles-accent-light);
+  --color-circles-accent-dark: var(--circles-accent-dark);
+  
+  /* Update blue color palette to use Circles primary */
+  --color-blue-500: var(--circles-primary);
+  --color-blue-600: var(--circles-primary-dark);
+  --color-blue-400: var(--circles-primary-light);
+  --color-blue-50: #f0f0ff;
+  --color-blue-100: #e0e0ff;
+  --color-blue-200: #c7c7ff;
+  
+  /* Update orange/red palette to use Circles accent */
+  --color-orange-500: var(--circles-accent);
+  --color-orange-600: var(--circles-accent-dark);
+  --color-orange-400: var(--circles-accent-light);
+  --color-red-500: var(--circles-accent);
+  --color-red-600: var(--circles-accent-dark);
+  
+  /* Gray scale - responsive to theme */
+  --color-gray-50: var(--gray-50);
+  --color-gray-100: var(--gray-100);
+  --color-gray-200: var(--gray-200);
+  --color-gray-300: var(--gray-300);
+  --color-gray-400: var(--gray-400);
+  --color-gray-500: var(--gray-500);
+  --color-gray-600: var(--gray-600);
+  --color-gray-700: var(--gray-700);
+  --color-gray-800: var(--gray-800);
+  --color-gray-900: var(--gray-900);
+  
+  /* Green colors for dark mode */
+  --color-green-50: #064e3b;
+  --color-green-200: #065f46;
+  --color-green-700: #10b981;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --gray-50: #1f2937;
+    --gray-100: #374151;
+    --gray-200: #4b5563;
+    --gray-300: #6b7280;
+    --gray-400: #9ca3af;
+    --gray-500: #d1d5db;
+    --gray-600: #e5e7eb;
+    --gray-700: #f3f4f6;
+    --gray-800: #f9fafb;
+    --gray-900: #ffffff;
   }
+}
+
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --gray-50: #1f2937;
+  --gray-100: #374151;
+  --gray-200: #4b5563;
+  --gray-300: #6b7280;
+  --gray-400: #9ca3af;
+  --gray-500: #d1d5db;
+  --gray-600: #e5e7eb;
+  --gray-700: #f3f4f6;
+  --gray-800: #f9fafb;
+  --gray-900: #ffffff;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-dm-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* Custom utility classes for Circles branding */
+.text-circles-primary {
+  color: var(--circles-primary);
+}
+
+.dark .text-circles-primary {
+  color: #6366f1; /* Lighter blue for dark mode */
+}
+
+.text-circles-accent {
+  color: var(--circles-accent);
+}
+
+.bg-circles-primary {
+  background-color: var(--circles-primary);
+}
+
+.dark .bg-circles-primary {
+  background-color: #6366f1; /* Lighter blue for dark mode */
+}
+
+.bg-circles-accent {
+  background-color: var(--circles-accent);
+}
+
+.border-circles-primary {
+  border-color: var(--circles-primary);
+}
+
+.dark .border-circles-primary {
+  border-color: #6366f1; /* Lighter blue for dark mode */
+}
+
+.border-circles-accent {
+  border-color: var(--circles-accent);
+}
+
+/* Hover states */
+.hover\:bg-circles-primary:hover {
+  background-color: var(--circles-primary-dark);
+}
+
+.hover\:bg-circles-accent:hover {
+  background-color: var(--circles-accent-dark);
+}
+
+/* Dark mode utility classes */
+.dark .bg-gray-50 {
+  background-color: var(--gray-50);
+}
+
+.dark .bg-white {
+  background-color: #1f2937;
+}
+
+.dark .text-gray-900 {
+  color: var(--gray-900);
+}
+
+.dark .text-gray-600 {
+  color: var(--gray-600);
+}
+
+.dark .text-gray-700 {
+  color: var(--gray-700);
+}
+
+.dark .border-gray-200 {
+  border-color: var(--gray-200);
+}
+
+.dark .bg-blue-50 {
+  background-color: #1e1b3a;
+}
+
+.dark .bg-green-50 {
+  background-color: var(--color-green-50);
+}
+
+.dark .bg-orange-50 {
+  background-color: #3d1a00;
+}
+
+.dark .bg-red-50 {
+  background-color: #3d1a00;
+}
+
+.dark .border-blue-200 {
+  border-color: #3b2fb5;
+}
+
+.dark .border-green-200 {
+  border-color: var(--color-green-200);
+}
+
+.dark .border-orange-200 {
+  border-color: #ff6340;
+}
+
+.dark .border-red-200 {
+  border-color: #ff6340;
+}
+
+/* Enhanced header shadow for dark mode */
+.dark header {
+  background-color: rgba(31, 41, 55, 0.9);
+  border-color: var(--gray-200);
+}
+
+/* Force dark backgrounds for gradient sections */
+.dark .bg-gradient-to-br {
+  background: #374151 !important; /* Force solid dark background */
+}
+
+/* Override any white backgrounds in dark mode */
+.dark .bg-white {
+  background-color: #1f2937 !important;
+}
+
+.dark .bg-gray-100 {
+  background-color: #374151 !important;
+}
+
+.dark .bg-blue-50 {
+  background-color: #1e3a8a !important;
+}
+
+.dark .bg-purple-50 {
+  background-color: #581c87 !important;
+}
+
+/* Force text visibility in dark mode */
+.dark .text-gray-900 {
+  color: #ffffff !important;
+}
+
+.dark .text-gray-800 {
+  color: #f3f4f6 !important;
+}
+
+.dark .text-gray-700 {
+  color: #e5e7eb !important;
+}
+
+.dark .text-gray-600 {
+  color: #d1d5db !important;
 }

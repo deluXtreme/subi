@@ -34,8 +34,8 @@ export const isSafeModuleInstalled = async (
     const safes = await apiKit.getSafesByModule(moduleAddress);
     console.log("Safes with module:", safes);
     return safes.safes.includes(getAddress(safeAddress));
-  } catch (error) {
-    console.error("Error checking if module is installed:", error);
+  } catch {
+    console.error("Error checking if module is installed");
     return false;
   }
 };
@@ -70,7 +70,7 @@ export const isSafeWallet = async (address: string): Promise<boolean> => {
   try {
     const safeInfo = await getSafeInfo(address);
     return safeInfo !== null;
-  } catch (error) {
+  } catch {
     return false;
   }
 };
