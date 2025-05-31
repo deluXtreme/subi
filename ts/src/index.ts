@@ -10,19 +10,6 @@ if (!safeAddress) {
 }
 console.log("Safe address from env:", safeAddress);
 
-async function checkEnabled(
-  safeAddress: string,
-  moduleAddress: string,
-): Promise<boolean> {
-  const safe = await getSafe(safeAddress);
-  return safe.isModuleEnabled(moduleAddress);
-}
-
 batchInstall(getAddress(safeAddress), SUBSCRIPTION_MANAGER)
-  .then(({ moduleAddress, enableHash }) => {
-    // checkEnabled(safeAddress, moduleAddress)
-    //   .then((enabled) => console.log("Safe has Module Enabled", enabled))
-    //   .catch();
-    console.log("Tx Hash:", enableHash);
-  })
+  .then()
   .catch((err) => console.error(err));

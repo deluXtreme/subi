@@ -90,14 +90,15 @@ export function buildRegisterManagerTx(
   };
 }
 
-
 export function buildRegisterManagerTx(
   hubAddress: Address,
   moduleProxyAddress: Address,
 ): MetaTransactionData {
   // Build the call data for enabling the module
   const enableModuleData = encodeFunctionData({
-    abi: parseAbi(["function setApprovalForAll(address operator, bool approved)"]),
+    abi: parseAbi([
+      "function setApprovalForAll(address operator, bool approved)",
+    ]),
     functionName: "setApprovalForAll",
     args: [moduleProxyAddress, true],
   });

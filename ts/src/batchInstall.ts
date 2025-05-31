@@ -14,7 +14,7 @@ export async function prepareEnableModuleTransactions(
   managerAddress: Address,
   salt: bigint = 110647465789069657756111682142268192901188952877020749627246931254533522453n,
 ): Promise<MetaTransactionData[]> {
-const client = getClient();
+  const client = getClient();
 
   const { tx: deployModuleTx, predictedAddress: moduleProxyAddress } =
     await buildModuleDeploymentTx(client, safeAddress, salt);
@@ -27,7 +27,10 @@ const client = getClient();
     moduleProxyAddress,
     managerAddress,
   );
-  const moduleApprovalTx = buildModuleApprovalTx(HUB_ADDRESS, moduleProxyAddress);
+  const moduleApprovalTx = buildModuleApprovalTx(
+    HUB_ADDRESS,
+    moduleProxyAddress,
+  );
   console.log("Deploy Tx", deployModuleTx);
   console.log("Enable Tx", enableModuleTx);
   console.log("Register Tx", registerModuleTx);
@@ -37,16 +40,19 @@ const client = getClient();
   return [deployModuleTx, enableModuleTx, registerModuleTx, moduleApprovalTx];
 }
 
-
 export async function batchInstall(
   safeAddress: Address,
   managerAddress: Address,
   salt: bigint = 110647465789069657756111682142268192901188952877020749627246931254533522453n,
 ): Promise<Hash> {
-  const transactions = await prepareEnableModuleTransactions(safeAddress, managerAddress, salt);
+  const transactions = await prepareEnableModuleTransactions(
+    safeAddress,
+    managerAddress,
+    salt,
+  );
   // Build the Safe transaction
   const safe = await getSafe(safeAddress);
-  const safeModuleTx = await safe.createTransaction({transactions});
+  const safeModuleTx = await safe.createTransaction({ transactions });
   console.log("Safe transaction built", safeModuleTx);
 
   // Sign the transaction using the locally configured signer (PRIVATE_KEY)
