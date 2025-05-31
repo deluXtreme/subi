@@ -6,29 +6,15 @@ import {
   parseAbi,
   type Hash,
 } from "viem";
-import {
-  getContractAddress,
-  getSafe,
-  getWalletClient,
-  SIGNER_ACCOUNT,
-  updateContractsJson,
-} from "./config";
-import {
-  OperationType,
-  type MetaTransactionData,
-} from "@safe-global/types-kit";
-
-const MODULE_PROXY_FACTORY =
-  "0x000000000000aDdB49795b0f9bA5BC298cDda236" as Address;
+import { getSafe, getWalletClient, SIGNER_ACCOUNT } from "./config";
+import { MODULE_PROXY_FACTORY, SUBSCRIPTION_MASTER_COPY } from "./constants";
+import { buildEnableModuleTx } from "./lib";
 
 export async function deployModule(
   safeAddress: Address,
   salt: bigint = 110647465789069657756111682142268192901188952877020749627246931254533522453n,
 ): Promise<{ moduleAddress: Address; deployHash: Hash; enableHash: Hash }> {
   const walletClient = getWalletClient();
-  const subscriptionModuleMasterCopy = getContractAddress(
-    "subscriptionModuleMasterCopy",
-  );
 
   const initParams = encodeAbiParameters(
     parseAbiParameters("address x, address y, address z"),
@@ -47,35 +33,19 @@ export async function deployModule(
       "function deployModule(address masterCopy,bytes memory initializer, uint256 saltNonce) public returns (address proxy)",
     ]),
     functionName: "deployModule",
-    args: [subscriptionModuleMasterCopy, initData, salt],
+    args: [SUBSCRIPTION_MASTER_COPY, initData, salt],
     account: SIGNER_ACCOUNT,
   });
+  console.log("Tx Request", request);
   // TODO Here we should just encode function call.
 
   const moduleAddress = result as Address;
   const txHash = await walletClient.writeContract(request);
 
   console.log(`Subscription Module deployed at:`, moduleAddress);
-  console.log("Transaction hash:", txHash);
-
-  updateContractsJson("subscriptionModuleProxy", moduleAddress);
-
-  // Build the call data for enabling the module
-  const enableModuleData = encodeFunctionData({
-    abi: parseAbi(["function enableModule(address module)"]),
-    functionName: "enableModule",
-    args: [moduleAddress],
-  });
-  console.log("Enable module data created:", enableModuleData);
 
   // Prepare the meta-transaction data object
-  const enableModuleTx: MetaTransactionData = {
-    to: safeAddress,
-    value: "0",
-    data: enableModuleData,
-    operation: OperationType.Call,
-  };
-  console.log("Transaction data prepared:", enableModuleTx);
+  const enableModuleTx = buildEnableModuleTx(safeAddress, moduleAddress);
 
   // Build the Safe transaction
   const safe = await getSafe(safeAddress);

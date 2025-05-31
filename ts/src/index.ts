@@ -1,8 +1,9 @@
 import { getAddress } from "viem";
-import { deployModule } from "./installModule";
+import { deployModule } from "./cliInstall";
 
-console.log("Running enable-module script...");
-const safeAddress = process.env.SAFE_ADDRESS;
+console.log("Running deploy & enable module script...");
+const safeAddress =
+  process.env.SAFE_ADDRESS;
 if (!safeAddress) {
   throw new Error("Missing SAFE_ADDRESS");
 }
