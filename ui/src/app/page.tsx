@@ -1,103 +1,117 @@
-import Image from "next/image";
+import { SubscribeButton } from "@/components/subscribe-button";
+import { ClientOnly } from "@/components/client-only";
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="min-h-screen p-8 bg-gray-50">
+      <main className="max-w-4xl mx-auto">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Subscription Manager
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            A Zodiac module for Safe wallets that enables recurring payments
+            through the Circles protocol. Connect your Safe wallet to manage
+            subscriptions.
+          </p>
         </div>
+
+        <div className="max-w-2xl mx-auto">
+          {/* Subscription Section */}
+          <div className="space-y-6">
+            <h2 className="text-2xl font-semibold text-gray-900 text-center">
+              Manage Subscription
+            </h2>
+            <div className="p-6 border border-gray-200 rounded-lg bg-white">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Create Subscription</h3>
+              <div className="space-y-3 mb-6">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-800 font-medium">Amount:</span>
+                  <span className="font-medium text-gray-900">
+                    1000000000000 CRCs
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-800 font-medium">Frequency:</span>
+                  <span className="font-medium text-gray-900">3600 seconds (1 hour)</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-800 font-medium">Recipient:</span>
+                  <span className="font-mono text-xs text-gray-900">0xede0...3fe</span>
+                </div>
+              </div>
+              <ClientOnly
+                fallback={
+                  <div className="p-4 border border-gray-200 rounded-lg bg-gray-50">
+                    <div className="animate-pulse">
+                      <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+                      <div className="h-8 bg-gray-200 rounded"></div>
+                    </div>
+                  </div>
+                }
+              >
+                <SubscribeButton
+                  recipient="0xede0c2e70e8e2d54609c1bdf79595506b6f623fe"
+                  amount={BigInt(1000000000000)}
+                  frequency={BigInt(3600)}
+                />
+              </ClientOnly>
+            </div>
+          </div>
+        </div>
+
+        {/* Info Section */}
+        <div className="mt-12 p-6 bg-blue-50 border border-blue-200 rounded-lg">
+          <h3 className="text-lg font-semibold text-blue-900 mb-3">
+            How it works
+          </h3>
+          <div className="grid gap-4 md:grid-cols-3 text-sm text-blue-800">
+            <div>
+              <div className="font-medium mb-2">1. Install Module</div>
+              <p>
+                Install the SubscriptionModule as a Zodiac module on your Safe
+                wallet.
+              </p>
+            </div>
+            <div>
+              <div className="font-medium mb-2">2. Create Subscriptions</div>
+              <p>
+                As Safe owner, create subscriptions that specify recipient,
+                amount, and payment frequency.
+              </p>
+            </div>
+            <div>
+              <div className="font-medium mb-2">3. Recipients Redeem</div>
+              <p>
+                Recipients can redeem payments when they&apos;re due using the
+                Circles protocol flow matrix.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Environment Info for Development */}
+        {process.env.NODE_ENV === "development" && (
+          <div className="mt-8 p-4 bg-gray-100 border border-gray-300 rounded-lg text-xs">
+            <h4 className="font-semibold mb-2 text-gray-800">Development Info:</h4>
+            <div className="space-y-1 font-mono text-gray-700">
+              <div>
+                Chain ID: {process.env.NEXT_PUBLIC_CHAIN_ID || "Not set"}{" "}
+                (Gnosis Chain)
+              </div>
+              <div>
+                Module Address:{" "}
+                {process.env.NEXT_PUBLIC_MODULE_ADDRESS || "Not set"}
+              </div>
+              <div>Circles Hub: 0xc12C1E50ABB450d6205Ea2C3Fa861b3B834d13e8</div>
+              <div>
+                Blockscout URL:{" "}
+                {process.env.NEXT_PUBLIC_BLOCKSCOUT_BASE_URL || "Not set"}
+              </div>
+            </div>
+          </div>
+        )}
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }
