@@ -12,3 +12,4 @@ zodiac/=lib/zodiac/contracts/
 @safe-smart-account/=lib/safe-smart-account
 @circles/=lib/circles-contracts-v2
 @solady/=lib/solady/
+@openzeppelin/=lib/openzeppelin-contracts/contracts

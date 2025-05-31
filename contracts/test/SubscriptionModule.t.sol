@@ -45,6 +45,7 @@ contract SubscriptionModuleTest is Test {
     }
 
     function test_Subscribe() external {
+        // TODO: Fails because of constant Manager contract.
         vm.startPrank(address(owner));
         manager.subscribe(recipient, 1e12, 3600);
     }
