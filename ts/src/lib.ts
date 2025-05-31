@@ -90,6 +90,26 @@ export function buildRegisterManagerTx(
   };
 }
 
+
+export function buildRegisterManagerTx(
+  hubAddress: Address,
+  moduleProxyAddress: Address,
+): MetaTransactionData {
+  // Build the call data for enabling the module
+  const enableModuleData = encodeFunctionData({
+    abi: parseAbi(["function setApprovalForAll(address operator, bool approved)"]),
+    functionName: "setApprovalForAll",
+    args: [moduleProxyAddress, true],
+  });
+
+  // Prepare the meta-transaction data object
+  return {
+    to: hubAddress,
+    value: "0",
+    data: enableModuleData,
+  };
+}
+
 export function predictMinimalProxyAddress({
   factory,
   masterCopy,

@@ -10,3 +10,5 @@ export const SUBSCRIPTION_MASTER_COPY = getAddress(
 export const SUBSCRIPTION_MANAGER = getAddress(
   "0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57",
 );
+
+export const HUB_ADDRESS = getAddress("0xc12C1E50ABB450d6205Ea2C3Fa861b3B834d13e8")
