@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate": "wagmi generate"
+    "generate": "wagmi generate",
+    "fmt": "npx prettier --write \"**/*.ts\" \"!src/generated.ts\""
   },
   "dependencies": {
     "@blockscout/app-sdk": "^0.1.1",
@@ -33,6 +34,7 @@
     "@wagmi/cli": "^2.3.1",
     "eslint": "^9",
     "eslint-config-next": "15.3.3",
+    "prettier": "^3.5.3",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^3.1.4"
