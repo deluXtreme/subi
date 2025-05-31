@@ -8,8 +8,8 @@ export default defineConfig({
     foundry({
       project: "../contracts",
       deployments: {
-        SubscriptionModule: {
-          100: "0x01E65042f8CE628f07bba35c97883825e7B97c2f", // Gnosis Chain
+        SubscriptionManager: {
+          100: "0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57", // Gnosis Chain
         },
       },
     }),

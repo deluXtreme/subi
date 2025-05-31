@@ -3,46 +3,46 @@ import { ClientOnly } from "@/components/client-only";
 
 export default function Home() {
   return (
-    <div className="min-h-screen p-8 bg-gray-50">
+    <div className="min-h-screen p-8 bg-gray-50 dark:bg-gray-900">
       <main className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Subscription Manager
+          <h1 className="text-5xl font-bold text-circles-primary mb-6">
+            Subi
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            A Zodiac module for Safe wallets that enables recurring payments
-            through the Circles protocol. Connect your Safe wallet to manage
-            subscriptions.
+          <p className="text-xl text-gray-800 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            A subscription management system for Safe wallets that enables recurring payments
+            through the Circles protocol. Connect your Safe wallet to create and manage
+            automated subscriptions.
           </p>
         </div>
 
         <div className="max-w-2xl mx-auto">
           {/* Subscription Section */}
           <div className="space-y-6">
-            <h2 className="text-2xl font-semibold text-gray-900 text-center">
-              Manage Subscription
+            <h2 className="text-2xl font-bold text-circles-primary text-center">
+              Create Subscription
             </h2>
-            <div className="p-6 border border-gray-200 rounded-lg bg-white">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Create Subscription</h3>
-              <div className="space-y-3 mb-6">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-800 font-medium">Amount:</span>
-                  <span className="font-medium text-gray-900">
+            <div className="p-8 border border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 shadow-sm">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6">Subscription Details</h3>
+              <div className="space-y-4 mb-8">
+                <div className="flex justify-between items-center py-3 px-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <span className="text-gray-700 dark:text-gray-300 font-semibold">Amount:</span>
+                  <span className="font-bold text-circles-primary">
                     1000000000000 CRCs
                   </span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-800 font-medium">Frequency:</span>
-                  <span className="font-medium text-gray-900">3600 seconds (1 hour)</span>
+                <div className="flex justify-between items-center py-3 px-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <span className="text-gray-700 dark:text-gray-300 font-semibold">Frequency:</span>
+                  <span className="font-bold text-circles-primary">Every hour</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-800 font-medium">Recipient:</span>
-                  <span className="font-mono text-xs text-gray-900">0xede0...3fe</span>
+                <div className="flex justify-between items-center py-3 px-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <span className="text-gray-700 dark:text-gray-300 font-semibold">Recipient:</span>
+                  <span className="font-mono text-sm text-circles-accent">0xede0...3fe</span>
                 </div>
               </div>
               <ClientOnly
                 fallback={
-                  <div className="p-4 border border-gray-200 rounded-lg bg-gray-50">
+                  <div className="p-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700">
                     <div className="animate-pulse">
                       <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
                       <div className="h-8 bg-gray-200 rounded"></div>
@@ -61,30 +61,39 @@ export default function Home() {
         </div>
 
         {/* Info Section */}
-        <div className="mt-12 p-6 bg-blue-50 border border-blue-200 rounded-lg">
-          <h3 className="text-lg font-semibold text-blue-900 mb-3">
-            How it works
+        <div className="mt-12 p-8 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl shadow-sm">
+          <h3 className="text-2xl font-bold text-circles-primary dark:text-blue-400 mb-6 text-center">
+            How Subi Works
           </h3>
-          <div className="grid gap-4 md:grid-cols-3 text-sm text-blue-800">
-            <div>
-              <div className="font-medium mb-2">1. Install Module</div>
-              <p>
-                Install the SubscriptionModule as a Zodiac module on your Safe
-                wallet.
+          <div className="grid gap-6 md:grid-cols-3">
+            <div className="text-center">
+              <div className="w-12 h-12 bg-circles-primary text-white rounded-full flex items-center justify-center font-bold text-lg mb-4 mx-auto">
+                1
+              </div>
+              <div className="font-bold text-gray-900 dark:text-white mb-3">Register Module</div>
+              <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+                Register your subscription module with the Subi contract to enable
+                automated payments from your Safe wallet.
               </p>
             </div>
-            <div>
-              <div className="font-medium mb-2">2. Create Subscriptions</div>
-              <p>
-                As Safe owner, create subscriptions that specify recipient,
-                amount, and payment frequency.
+            <div className="text-center">
+              <div className="w-12 h-12 bg-circles-accent text-white rounded-full flex items-center justify-center font-bold text-lg mb-4 mx-auto">
+                2
+              </div>
+              <div className="font-bold text-gray-900 dark:text-white mb-3">Create Subscriptions</div>
+              <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+                Set up recurring payments by specifying recipient address,
+                amount, and frequency for your subscriptions.
               </p>
             </div>
-            <div>
-              <div className="font-medium mb-2">3. Recipients Redeem</div>
-              <p>
-                Recipients can redeem payments when they&apos;re due using the
-                Circles protocol flow matrix.
+            <div className="text-center">
+              <div className="w-12 h-12 bg-circles-primary text-white rounded-full flex items-center justify-center font-bold text-lg mb-4 mx-auto">
+                3
+              </div>
+              <div className="font-bold text-gray-900 dark:text-white mb-3">Automated Payments</div>
+              <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+                Recipients can claim their payments when due through the
+                Circles protocol&apos;s secure flow matrix system.
               </p>
             </div>
           </div>
@@ -92,9 +101,9 @@ export default function Home() {
 
         {/* Environment Info for Development */}
         {process.env.NODE_ENV === "development" && (
-          <div className="mt-8 p-4 bg-gray-100 border border-gray-300 rounded-lg text-xs">
-            <h4 className="font-semibold mb-2 text-gray-800">Development Info:</h4>
-            <div className="space-y-1 font-mono text-gray-700">
+          <div className="mt-8 p-4 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-xs">
+            <h4 className="font-semibold mb-2 text-gray-800 dark:text-white">Development Info:</h4>
+            <div className="space-y-1 font-mono text-gray-700 dark:text-gray-200">
               <div>
                 Chain ID: {process.env.NEXT_PUBLIC_CHAIN_ID || "Not set"}{" "}
                 (Gnosis Chain)

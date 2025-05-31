@@ -16,3 +16,4 @@ docs/
 **/dist
 # Virtual env
 .venv
+.DS_Store

@@ -19,7 +19,7 @@ contract SubscriptionModule is Module {
     }
 
     address public constant HUB_ADDRESS = 0xc12C1E50ABB450d6205Ea2C3Fa861b3B834d13e8;
-    address public constant SUBSCRIPTION_MANAGER = 0x5615dEB798BB3E4dFa0139dFa1b3D433Cc23b72f;
+    address public constant SUBSCRIPTION_MANAGER = 0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57;
 
     uint256 public subscriptionCounter;
     mapping(uint256 => Subscription) public subscriptions;
