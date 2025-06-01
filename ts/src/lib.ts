@@ -8,14 +8,21 @@ import {
   encodePacked,
   type Hex,
   getCreate2Address,
-  type PublicClient,
   http,
   createPublicClient,
 } from "viem";
 import { type MetaTransactionData } from "@safe-global/types-kit";
-import { HUB_ADDRESS, MODULE_PROXY_FACTORY, SUBSCRIPTION_MASTER_COPY } from "./constants";
+import {
+  HUB_ADDRESS,
+  MODULE_PROXY_FACTORY,
+  SUBSCRIPTION_MANAGER,
+  SUBSCRIPTION_MASTER_COPY,
+} from "./constants";
 import { gnosis } from "viem/chains";
 
+const defaultSalt = BigInt(
+  "110647465789069657756111682142268192901188952877020749627246931254533522453",
+);
 // TODO: Use Config.
 export const getClient = () => {
   return createPublicClient({
@@ -26,31 +33,41 @@ export const getClient = () => {
 
 export async function prepareEnableModuleTransactions(
   safeAddress: Address,
-  managerAddress: Address,
-  salt: bigint = 110647465789069657756111682142268192901188952877020749627246931254533522453n,
+  managerAddress: Address = SUBSCRIPTION_MANAGER,
+  salt: bigint = defaultSalt,
 ): Promise<MetaTransactionData[]> {
   const { tx: deployModuleTx, predictedAddress: moduleProxyAddress } =
     await buildModuleDeploymentTx(safeAddress, salt);
-  console.log("Deploy Tx", deployModuleTx);
-  console.log(`Subscription Module address:`, moduleProxyAddress);
+  const client = createPublicClient({
+    chain: gnosis,
+    transport: http("https://rpc.gnosischain.com/"),
+  });
+
+  const code = await client.getCode({
+    address: moduleProxyAddress,
+  });
+
+  const isDeployed = code !== undefined;
 
   // Prepare the meta-transaction data object
   const enableModuleTx = buildEnableModuleTx(safeAddress, moduleProxyAddress);
-  console.log("Enable Tx", enableModuleTx);
   const registerModuleTx = buildRegisterManagerTx(
     moduleProxyAddress,
     managerAddress,
   );
-  console.log("Register Tx", registerModuleTx);
+
   const moduleApprovalTx = buildModuleApprovalTx(
     HUB_ADDRESS,
     moduleProxyAddress,
   );
-  console.log("Approval Tx", moduleApprovalTx);
 
-  return [deployModuleTx, enableModuleTx, registerModuleTx, moduleApprovalTx];
+  return [
+    ...(isDeployed ? [] : [deployModuleTx]),
+    enableModuleTx,
+    registerModuleTx,
+    moduleApprovalTx,
+  ];
 }
-
 
 export async function buildModuleDeploymentTx(
   safeAddress: Address,
@@ -127,14 +144,15 @@ export function buildRegisterManagerTx(
   };
 }
 
-
 export function buildModuleApprovalTx(
   hubAddress: Address,
   moduleProxyAddress: Address,
 ): MetaTransactionData {
   // Build the call data for enabling the module
   const enableModuleData = encodeFunctionData({
-    abi: parseAbi(["function setApprovalForAll(address operator, bool approved)"]),
+    abi: parseAbi([
+      "function setApprovalForAll(address operator, bool approved)",
+    ]),
     functionName: "setApprovalForAll",
     args: [moduleProxyAddress, true],
   });
