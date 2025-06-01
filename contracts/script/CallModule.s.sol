@@ -7,15 +7,15 @@ import {SubscriptionManager} from "src/SubscriptionManager.sol";
 
 // forge script --chain gnosis script/CallModule.s.sol:CallModuleScript --rpc-url $RPC_URL --private-key $PRIVATE_KEY --broadcast -vvvv
 contract CallModuleScript is Script {
-    address internal constant MANAGER = 0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57;
-    address internal constant module = 0xB01A77928f5F01f416944CD60dD1605Dd8AB24B3;
+    address internal constant MANAGER = 0x7E9BaF7CC7cD83bACeFB9B2D5c5124C0F9c30834;
+    address internal constant module = 0x245468176597dFb5eFf9f751018BdBf3B5ae858C;
 
     SubscriptionManager internal manager = SubscriptionManager(MANAGER);
 
     function run() public {
         vm.startBroadcast();
 
-        uint256 subId = 1;
+        uint256 subId = 0;
 
         address[] memory flowVertices = new address[](2);
         flowVertices[0] = 0x6B69683C8897e3d18e74B1Ba117b49f80423Da5d;
