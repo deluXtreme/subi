@@ -18,6 +18,7 @@ import {
   logContractCall,
   logTransaction,
 } from "@/lib/logger";
+import { useNotification } from "@blockscout/app-sdk";
 
 interface SubscribeButtonProps {
   recipient?: string;
@@ -34,6 +35,7 @@ export function SubscribeButton({
 }: SubscribeButtonProps) {
   const logger = createLogger({ component: "SubscribeButton" });
   const { address, isConnected } = useAccount();
+  const { openTxToast } = useNotification();
   const {
     writeContract,
     data: hash,
@@ -120,8 +122,10 @@ export function SubscribeButton({
         address,
         recipient,
       });
+      // Show transaction toast notification
+      openTxToast("100", hash);
     }
-  }, [hash, address, recipient]);
+  }, [hash, address, recipient, openTxToast]);
 
   useEffect(() => {
     if (isConfirming && hash) {
@@ -274,6 +278,9 @@ export function SubscribeButton({
         transactionCount: calls.length,
         totalTimeMs: (performance.now() - startTime).toFixed(2),
       });
+
+      // Show transaction toast notification
+      await openTxToast("100", result.id);
       logUserAction("Module registration batch submitted", {
         address,
         batchId: result.id,
