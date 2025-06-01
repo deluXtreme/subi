@@ -16,6 +16,8 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@circles-sdk/pathfinder": "^0.27.3",
+    "@circles-sdk/sdk": "^0.27.3",
     "@safe-global/protocol-kit": "^6.0.4",
     "viem": "^2.30.5"
   }
