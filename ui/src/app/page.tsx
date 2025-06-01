@@ -1,7 +1,12 @@
 import { SubscribeButton } from "@/components/subscribe-button";
 import { ClientOnly } from "@/components/client-only";
+import { formatEther } from "viem";
 
 export default function Home() {
+  const amount = BigInt(1000000000000);
+  const frequency = BigInt(3600);
+  const recipient = "0xede0c2e70e8e2d54609c1bdf79595506b6f623fe";
+
   return (
     <div className="min-h-screen p-8 bg-gray-50 dark:bg-gray-900">
       <main className="max-w-4xl mx-auto">
@@ -28,16 +33,16 @@ export default function Home() {
                 <div className="flex justify-between items-center py-3 px-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                   <span className="text-gray-700 dark:text-gray-300 font-semibold">Amount:</span>
                   <span className="font-bold text-circles-primary">
-                    1000000000000 CRCs
+                    {formatEther(amount)} CRCs
                   </span>
                 </div>
                 <div className="flex justify-between items-center py-3 px-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                   <span className="text-gray-700 dark:text-gray-300 font-semibold">Frequency:</span>
-                  <span className="font-bold text-circles-primary">Every hour</span>
+                  <span className="font-bold text-circles-primary">Every {frequency} seconds</span>
                 </div>
                 <div className="flex justify-between items-center py-3 px-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                   <span className="text-gray-700 dark:text-gray-300 font-semibold">Recipient:</span>
-                  <span className="font-mono text-sm text-circles-accent">0xede0...3fe</span>
+                  <span className="font-mono text-sm text-circles-accent">{recipient}</span>
                 </div>
               </div>
               <ClientOnly
@@ -51,9 +56,9 @@ export default function Home() {
                 }
               >
                 <SubscribeButton
-                  recipient="0xede0c2e70e8e2d54609c1bdf79595506b6f623fe"
-                  amount={BigInt(1000000000000)}
-                  frequency={BigInt(3600)}
+                  recipient={recipient}
+                  amount={amount}
+                  frequency={frequency}
                 />
               </ClientOnly>
             </div>
