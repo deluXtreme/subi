@@ -16,6 +16,7 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@1inch/cross-chain-sdk": "^0.1.15-rc.0",
     "@safe-global/protocol-kit": "^6.0.4",
     "viem": "^2.30.5"
   }
