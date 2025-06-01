@@ -1248,7 +1248,7 @@ export const scriptUtilsAbi = [
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x7E9BaF7CC7cD83bACeFB9B2D5c5124C0F9c30834)
  */
 export const subscriptionManagerAbi = [
   {
@@ -1417,14 +1417,14 @@ export const subscriptionManagerAbi = [
 ] as const
 
 /**
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x7E9BaF7CC7cD83bACeFB9B2D5c5124C0F9c30834)
  */
 export const subscriptionManagerAddress = {
-  100: '0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57',
+  100: '0x7E9BaF7CC7cD83bACeFB9B2D5c5124C0F9c30834',
 } as const
 
 /**
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x7E9BaF7CC7cD83bACeFB9B2D5c5124C0F9c30834)
  */
 export const subscriptionManagerConfig = {
   address: subscriptionManagerAddress,
@@ -2974,7 +2974,7 @@ export const useReadScriptUtilsIsScript = /*#__PURE__*/ createUseReadContract({
 /**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link subscriptionManagerAbi}__
  *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x7E9BaF7CC7cD83bACeFB9B2D5c5124C0F9c30834)
  */
 export const useReadSubscriptionManager = /*#__PURE__*/ createUseReadContract({
   abi: subscriptionManagerAbi,
@@ -2984,7 +2984,7 @@ export const useReadSubscriptionManager = /*#__PURE__*/ createUseReadContract({
 /**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link subscriptionManagerAbi}__ and `functionName` set to `"getAllModules"`
  *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x7E9BaF7CC7cD83bACeFB9B2D5c5124C0F9c30834)
  */
 export const useReadSubscriptionManagerGetAllModules =
   /*#__PURE__*/ createUseReadContract({
@@ -2996,7 +2996,7 @@ export const useReadSubscriptionManagerGetAllModules =
 /**
  * Wraps __{@link useReadContract}__ with `abi` set to __{@link subscriptionManagerAbi}__ and `functionName` set to `"modules"`
  *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x7E9BaF7CC7cD83bACeFB9B2D5c5124C0F9c30834)
  */
 export const useReadSubscriptionManagerModules =
   /*#__PURE__*/ createUseReadContract({
@@ -3008,7 +3008,7 @@ export const useReadSubscriptionManagerModules =
 /**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link subscriptionManagerAbi}__
  *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x7E9BaF7CC7cD83bACeFB9B2D5c5124C0F9c30834)
  */
 export const useWriteSubscriptionManager = /*#__PURE__*/ createUseWriteContract(
   { abi: subscriptionManagerAbi, address: subscriptionManagerAddress },
@@ -3017,7 +3017,7 @@ export const useWriteSubscriptionManager = /*#__PURE__*/ createUseWriteContract(
 /**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link subscriptionManagerAbi}__ and `functionName` set to `"cancel"`
  *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x7E9BaF7CC7cD83bACeFB9B2D5c5124C0F9c30834)
  */
 export const useWriteSubscriptionManagerCancel =
   /*#__PURE__*/ createUseWriteContract({
@@ -3029,7 +3029,7 @@ export const useWriteSubscriptionManagerCancel =
 /**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link subscriptionManagerAbi}__ and `functionName` set to `"redeemPayment"`
  *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x7E9BaF7CC7cD83bACeFB9B2D5c5124C0F9c30834)
  */
 export const useWriteSubscriptionManagerRedeemPayment =
   /*#__PURE__*/ createUseWriteContract({
@@ -3041,7 +3041,7 @@ export const useWriteSubscriptionManagerRedeemPayment =
 /**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link subscriptionManagerAbi}__ and `functionName` set to `"registerModule"`
  *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x7E9BaF7CC7cD83bACeFB9B2D5c5124C0F9c30834)
  */
 export const useWriteSubscriptionManagerRegisterModule =
   /*#__PURE__*/ createUseWriteContract({
@@ -3053,7 +3053,7 @@ export const useWriteSubscriptionManagerRegisterModule =
 /**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link subscriptionManagerAbi}__ and `functionName` set to `"subscribe"`
  *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x7E9BaF7CC7cD83bACeFB9B2D5c5124C0F9c30834)
  */
 export const useWriteSubscriptionManagerSubscribe =
   /*#__PURE__*/ createUseWriteContract({
@@ -3065,7 +3065,7 @@ export const useWriteSubscriptionManagerSubscribe =
 /**
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link subscriptionManagerAbi}__
  *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x7E9BaF7CC7cD83bACeFB9B2D5c5124C0F9c30834)
  */
 export const useSimulateSubscriptionManager =
   /*#__PURE__*/ createUseSimulateContract({
@@ -3076,7 +3076,7 @@ export const useSimulateSubscriptionManager =
 /**
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link subscriptionManagerAbi}__ and `functionName` set to `"cancel"`
  *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x7E9BaF7CC7cD83bACeFB9B2D5c5124C0F9c30834)
  */
 export const useSimulateSubscriptionManagerCancel =
   /*#__PURE__*/ createUseSimulateContract({
@@ -3088,7 +3088,7 @@ export const useSimulateSubscriptionManagerCancel =
 /**
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link subscriptionManagerAbi}__ and `functionName` set to `"redeemPayment"`
  *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x7E9BaF7CC7cD83bACeFB9B2D5c5124C0F9c30834)
  */
 export const useSimulateSubscriptionManagerRedeemPayment =
   /*#__PURE__*/ createUseSimulateContract({
@@ -3100,7 +3100,7 @@ export const useSimulateSubscriptionManagerRedeemPayment =
 /**
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link subscriptionManagerAbi}__ and `functionName` set to `"registerModule"`
  *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x7E9BaF7CC7cD83bACeFB9B2D5c5124C0F9c30834)
  */
 export const useSimulateSubscriptionManagerRegisterModule =
   /*#__PURE__*/ createUseSimulateContract({
@@ -3112,7 +3112,7 @@ export const useSimulateSubscriptionManagerRegisterModule =
 /**
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link subscriptionManagerAbi}__ and `functionName` set to `"subscribe"`
  *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x7E9BaF7CC7cD83bACeFB9B2D5c5124C0F9c30834)
  */
 export const useSimulateSubscriptionManagerSubscribe =
   /*#__PURE__*/ createUseSimulateContract({
@@ -3124,7 +3124,7 @@ export const useSimulateSubscriptionManagerSubscribe =
 /**
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link subscriptionManagerAbi}__
  *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x7E9BaF7CC7cD83bACeFB9B2D5c5124C0F9c30834)
  */
 export const useWatchSubscriptionManagerEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
@@ -3135,7 +3135,7 @@ export const useWatchSubscriptionManagerEvent =
 /**
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link subscriptionManagerAbi}__ and `eventName` set to `"Redeemed"`
  *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x7E9BaF7CC7cD83bACeFB9B2D5c5124C0F9c30834)
  */
 export const useWatchSubscriptionManagerRedeemedEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
@@ -3147,7 +3147,7 @@ export const useWatchSubscriptionManagerRedeemedEvent =
 /**
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link subscriptionManagerAbi}__ and `eventName` set to `"SubscriptionCancelled"`
  *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x7E9BaF7CC7cD83bACeFB9B2D5c5124C0F9c30834)
  */
 export const useWatchSubscriptionManagerSubscriptionCancelledEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
@@ -3159,7 +3159,7 @@ export const useWatchSubscriptionManagerSubscriptionCancelledEvent =
 /**
  * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link subscriptionManagerAbi}__ and `eventName` set to `"SubscriptionCreated"`
  *
- * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x7E9BaF7CC7cD83bACeFB9B2D5c5124C0F9c30834)
  */
 export const useWatchSubscriptionManagerSubscriptionCreatedEvent =
   /*#__PURE__*/ createUseWatchContractEvent({
