@@ -107,9 +107,7 @@ contract SubscriptionModule is Module {
             exec(
                 HUB_ADDRESS,
                 0,
-                abi.encodeWithSelector(
-                    IHubV2.operateFlowMatrix.selector, flowVertices, flow, streams, packedCoordinates
-                ),
+                abi.encodeCall(IHubV2.operateFlowMatrix, (flowVertices, flow, streams, packedCoordinates)),
                 Enum.Operation.Call
             ),
             CannotExec()
@@ -121,16 +119,5 @@ contract SubscriptionModule is Module {
     function cancel(uint256 subId) external onlyManager {
         subscriptions[subId] =
             Subscription({recipient: address(0), amount: 0, lastRedeemed: type(uint256).max, frequency: 0});
-    }
-
-    /// @notice Executes the transaction from module with the guard checks
-    function exec(address to, uint256 value, bytes memory data, Enum.Operation operation)
-        internal
-        override
-        returns (bool)
-    {
-        (bytes memory txData,,) = abi.decode(data, (bytes, address, address));
-
-        return IAvatar(target).execTransactionFromModule(to, value, txData, operation);
     }
 }
