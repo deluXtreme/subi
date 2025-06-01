@@ -9,7 +9,7 @@ export default defineConfig({
       project: "../contracts",
       deployments: {
         SubscriptionManager: {
-          100: "0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57", // Gnosis Chain
+          100: "0x7E9BaF7CC7cD83bACeFB9B2D5c5124C0F9c30834", // Gnosis Chain
         },
       },
     }),
