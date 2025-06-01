@@ -10,6 +10,7 @@ import {
   getCreate2Address,
   http,
   createPublicClient,
+  getAddress,
 } from "viem";
 import { type MetaTransactionData } from "@safe-global/types-kit";
 import {
@@ -43,11 +44,12 @@ export async function prepareEnableModuleTransactions(
     transport: http("https://rpc.gnosischain.com/"),
   });
 
-  const code = await client.getCode({
-    address: moduleProxyAddress,
-  });
-
+  const [code, installedSafes] = await Promise.all([
+    client.getCode({ address: moduleProxyAddress }),
+    getSafesForModule(moduleProxyAddress),
+  ]);
   const isDeployed = code !== undefined;
+  const isInstalled = installedSafes.includes(safeAddress);
 
   // Prepare the meta-transaction data object
   const enableModuleTx = buildEnableModuleTx(safeAddress, moduleProxyAddress);
@@ -63,7 +65,7 @@ export async function prepareEnableModuleTransactions(
 
   return [
     ...(isDeployed ? [] : [deployModuleTx]),
-    enableModuleTx,
+    ...(isInstalled ? [] : [enableModuleTx]),
     registerModuleTx,
     moduleApprovalTx,
   ];
@@ -202,10 +204,26 @@ export function predictMinimalProxyAddress({
   });
 }
 
-// export async function checkEnabled(
-//   safeAddress: string,
-//   moduleAddress: string,
-// ): Promise<boolean> {
-//   const safe = await getSafe(safeAddress);
-//   return safe.isModuleEnabled(moduleAddress);
-// }
+async function getSafesForModule(moduleAddress: string): Promise<Address[]> {
+  const SAFE_MODULES_URL =
+    "https://safe-transaction-gnosis-chain.safe.global/api/v1/modules";
+  const url = `${SAFE_MODULES_URL}/${moduleAddress}/safes/`;
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch safes for module ${moduleAddress}: ${response.statusText}`,
+    );
+  }
+
+  const data: { safes: string[] } = (await response.json()) as {
+    safes: string[];
+  };
+  return data.safes.map((x) => getAddress(x));
+}
