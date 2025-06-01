@@ -194,10 +194,10 @@ function buildRegisterManagerTx(
   logContractCall('SubscriptionManager', 'registerModule', { module: moduleAddress });
 
   // Build the call data for enabling the module
-  const registerModuleData = encodeFunctionData({
-    abi: parseAbi(["function registerModule(address module)"]),
+  const enableModuleData = encodeFunctionData({
+    abi: parseAbi(["function registerModule(address module, bool isEnabled)"]),
     functionName: "registerModule",
-    args: [moduleAddress],
+    args: [moduleAddress, true],
   });
 
   const tx = {

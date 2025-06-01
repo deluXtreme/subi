@@ -1,5 +1,4 @@
 import { getAddress } from "viem";
-import { getSafe } from "./config";
 import { batchInstall } from "./batchInstall";
 import { SUBSCRIPTION_MANAGER } from "./constants";
 
@@ -11,5 +10,7 @@ if (!safeAddress) {
 console.log("Safe address from env:", safeAddress);
 
 batchInstall(getAddress(safeAddress), SUBSCRIPTION_MANAGER)
-  .then()
+  .then((hash) => {
+    console.log("Tx Hash:", hash);
+  })
   .catch((err) => console.error(err));
