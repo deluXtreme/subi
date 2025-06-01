@@ -928,6 +928,13 @@ export const iMulticall3Abi = [
 export const iSubscriptionModuleAbi = [
   {
     type: 'function',
+    inputs: [{ name: 'subId', internalType: 'uint256', type: 'uint256' }],
+    name: 'cancel',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     inputs: [],
     name: 'owner',
     outputs: [{ name: '', internalType: 'address', type: 'address' }],
@@ -1246,6 +1253,16 @@ export const scriptUtilsAbi = [
 export const subscriptionManagerAbi = [
   {
     type: 'function',
+    inputs: [
+      { name: 'module', internalType: 'address', type: 'address' },
+      { name: 'subId', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'cancel',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     inputs: [],
     name: 'getAllModules',
     outputs: [{ name: '', internalType: 'address[]', type: 'address[]' }],
@@ -1291,7 +1308,10 @@ export const subscriptionManagerAbi = [
   },
   {
     type: 'function',
-    inputs: [{ name: 'module', internalType: 'address', type: 'address' }],
+    inputs: [
+      { name: 'module', internalType: 'address', type: 'address' },
+      { name: 'isEnabled', internalType: 'bool', type: 'bool' },
+    ],
     name: 'registerModule',
     outputs: [],
     stateMutability: 'nonpayable',
@@ -1331,6 +1351,25 @@ export const subscriptionManagerAbi = [
       },
     ],
     name: 'Redeemed',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'subId',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: true,
+      },
+      {
+        name: 'module',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+    ],
+    name: 'SubscriptionCancelled',
   },
   {
     type: 'event',
@@ -1426,6 +1465,13 @@ export const subscriptionModuleAbi = [
     name: 'avatar',
     outputs: [{ name: '', internalType: 'address', type: 'address' }],
     stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'subId', internalType: 'uint256', type: 'uint256' }],
+    name: 'cancel',
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
@@ -2573,6 +2619,15 @@ export const useWriteISubscriptionModule = /*#__PURE__*/ createUseWriteContract(
 )
 
 /**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link iSubscriptionModuleAbi}__ and `functionName` set to `"cancel"`
+ */
+export const useWriteISubscriptionModuleCancel =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: iSubscriptionModuleAbi,
+    functionName: 'cancel',
+  })
+
+/**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link iSubscriptionModuleAbi}__ and `functionName` set to `"redeemPayment"`
  */
 export const useWriteISubscriptionModuleRedeemPayment =
@@ -2595,6 +2650,15 @@ export const useWriteISubscriptionModuleSubscribe =
  */
 export const useSimulateISubscriptionModule =
   /*#__PURE__*/ createUseSimulateContract({ abi: iSubscriptionModuleAbi })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link iSubscriptionModuleAbi}__ and `functionName` set to `"cancel"`
+ */
+export const useSimulateISubscriptionModuleCancel =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: iSubscriptionModuleAbi,
+    functionName: 'cancel',
+  })
 
 /**
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link iSubscriptionModuleAbi}__ and `functionName` set to `"redeemPayment"`
@@ -2951,6 +3015,18 @@ export const useWriteSubscriptionManager = /*#__PURE__*/ createUseWriteContract(
 )
 
 /**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link subscriptionManagerAbi}__ and `functionName` set to `"cancel"`
+ *
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ */
+export const useWriteSubscriptionManagerCancel =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: subscriptionManagerAbi,
+    address: subscriptionManagerAddress,
+    functionName: 'cancel',
+  })
+
+/**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link subscriptionManagerAbi}__ and `functionName` set to `"redeemPayment"`
  *
  * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
@@ -2995,6 +3071,18 @@ export const useSimulateSubscriptionManager =
   /*#__PURE__*/ createUseSimulateContract({
     abi: subscriptionManagerAbi,
     address: subscriptionManagerAddress,
+  })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link subscriptionManagerAbi}__ and `functionName` set to `"cancel"`
+ *
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ */
+export const useSimulateSubscriptionManagerCancel =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: subscriptionManagerAbi,
+    address: subscriptionManagerAddress,
+    functionName: 'cancel',
   })
 
 /**
@@ -3054,6 +3142,18 @@ export const useWatchSubscriptionManagerRedeemedEvent =
     abi: subscriptionManagerAbi,
     address: subscriptionManagerAddress,
     eventName: 'Redeemed',
+  })
+
+/**
+ * Wraps __{@link useWatchContractEvent}__ with `abi` set to __{@link subscriptionManagerAbi}__ and `eventName` set to `"SubscriptionCancelled"`
+ *
+ * [__View Contract on Gnosis Gnosisscan__](https://gnosisscan.io/address/0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57)
+ */
+export const useWatchSubscriptionManagerSubscriptionCancelledEvent =
+  /*#__PURE__*/ createUseWatchContractEvent({
+    abi: subscriptionManagerAbi,
+    address: subscriptionManagerAddress,
+    eventName: 'SubscriptionCancelled',
   })
 
 /**
@@ -3146,6 +3246,15 @@ export const useWriteSubscriptionModule = /*#__PURE__*/ createUseWriteContract({
 })
 
 /**
+ * Wraps __{@link useWriteContract}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `functionName` set to `"cancel"`
+ */
+export const useWriteSubscriptionModuleCancel =
+  /*#__PURE__*/ createUseWriteContract({
+    abi: subscriptionModuleAbi,
+    functionName: 'cancel',
+  })
+
+/**
  * Wraps __{@link useWriteContract}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `functionName` set to `"redeemPayment"`
  */
 export const useWriteSubscriptionModuleRedeemPayment =
@@ -3213,6 +3322,15 @@ export const useWriteSubscriptionModuleTransferOwnership =
  */
 export const useSimulateSubscriptionModule =
   /*#__PURE__*/ createUseSimulateContract({ abi: subscriptionModuleAbi })
+
+/**
+ * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `functionName` set to `"cancel"`
+ */
+export const useSimulateSubscriptionModuleCancel =
+  /*#__PURE__*/ createUseSimulateContract({
+    abi: subscriptionModuleAbi,
+    functionName: 'cancel',
+  })
 
 /**
  * Wraps __{@link useSimulateContract}__ with `abi` set to __{@link subscriptionModuleAbi}__ and `functionName` set to `"redeemPayment"`
