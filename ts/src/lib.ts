@@ -29,35 +29,30 @@ export async function prepareEnableModuleTransactions(
   managerAddress: Address,
   salt: bigint = 110647465789069657756111682142268192901188952877020749627246931254533522453n,
 ): Promise<MetaTransactionData[]> {
-  const client = getClient();
-
   const { tx: deployModuleTx, predictedAddress: moduleProxyAddress } =
-    await buildModuleDeploymentTx(client, safeAddress, salt);
-
+    await buildModuleDeploymentTx(safeAddress, salt);
+  console.log("Deploy Tx", deployModuleTx);
   console.log(`Subscription Module address:`, moduleProxyAddress);
 
   // Prepare the meta-transaction data object
   const enableModuleTx = buildEnableModuleTx(safeAddress, moduleProxyAddress);
+  console.log("Enable Tx", enableModuleTx);
   const registerModuleTx = buildRegisterManagerTx(
     moduleProxyAddress,
     managerAddress,
   );
+  console.log("Register Tx", registerModuleTx);
   const moduleApprovalTx = buildModuleApprovalTx(
     HUB_ADDRESS,
     moduleProxyAddress,
   );
-  console.log("Deploy Tx", deployModuleTx);
-  console.log("Enable Tx", enableModuleTx);
-  console.log("Register Tx", registerModuleTx);
   console.log("Approval Tx", moduleApprovalTx);
-  console.log("Predicted Address", moduleProxyAddress);
 
   return [deployModuleTx, enableModuleTx, registerModuleTx, moduleApprovalTx];
 }
 
 
 export async function buildModuleDeploymentTx(
-  client: PublicClient,
   safeAddress: Address,
   salt: bigint = 110647465789069657756111682142268192901188952877020749627246931254533522453n,
 ): Promise<{ tx: MetaTransactionData; predictedAddress: Address }> {
@@ -119,9 +114,9 @@ export function buildRegisterManagerTx(
 ): MetaTransactionData {
   // Build the call data for enabling the module
   const enableModuleData = encodeFunctionData({
-    abi: parseAbi(["function registerModule(address module)"]),
+    abi: parseAbi(["function registerModule(address module, bool isEnabled)"]),
     functionName: "registerModule",
-    args: [moduleAddress],
+    args: [moduleAddress, true],
   });
 
   // Prepare the meta-transaction data object
