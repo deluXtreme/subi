@@ -12,6 +12,8 @@ export async function batchInstall(
     managerAddress,
     salt,
   );
+  console.log("Prepared Transactions", transactions);
+  throw new Error("BROKEN!");
   // Build the Safe transaction
   const safe = await getSafe(safeAddress);
   const safeModuleTx = await safe.createTransaction({ transactions });

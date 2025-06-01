@@ -8,6 +8,8 @@ import {
   encodePacked,
   type Hex,
   getCreate2Address,
+  createPublicClient,
+  http,
 } from "viem";
 import { type MetaTransactionData } from "@safe-global/types-kit";
 import {
@@ -17,6 +19,7 @@ import {
   SUBSCRIPTION_MASTER_COPY,
 } from "./constants";
 import { createLogger, logContractCall } from "./logger";
+import { gnosis } from "viem/chains";
 
 const defaultSalt = BigInt(
   "110647465789069657756111682142268192901188952877020749627246931254533522453",
@@ -41,6 +44,16 @@ export async function prepareEnableModuleTransactions(
 
   const { tx: deployModuleTx, predictedAddress: moduleProxyAddress } =
     await buildModuleDeploymentTx(safeAddress, salt);
+  const client = createPublicClient({
+    chain: gnosis,
+    transport: http("https://rpc.gnosischain.com/"),
+  });
+
+  const code = await client.getCode({
+    address: moduleProxyAddress,
+  });
+
+  const isDeployed = code !== undefined;
 
   logger.info("Module deployment transaction prepared", {
     safeAddress,
@@ -63,27 +76,13 @@ export async function prepareEnableModuleTransactions(
     moduleProxyAddress,
   );
   logger.debug("Module approval transaction built", { moduleApprovalTx });
-
-  const transactions = [
-    deployModuleTx,
+  
+  return [
+    ...isDeployed ? [] : [deployModuleTx],
     enableModuleTx,
     registerModuleTx,
     moduleApprovalTx,
   ];
-
-  logger.info("All module enablement transactions prepared", {
-    safeAddress,
-    moduleProxyAddress,
-    transactionCount: transactions.length,
-    transactions: transactions.map((tx, index) => ({
-      index,
-      to: tx.to,
-      value: tx.value,
-      dataLength: tx.data.length,
-    })),
-  });
-
-  return transactions;
 }
 
 export async function buildModuleDeploymentTx(
