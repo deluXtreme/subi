@@ -59,7 +59,7 @@ contract SubscriptionModule is Module {
         subId = subscriptionCounter;
         subscriptionCounter++;
         // Initial lastRedeemed is 0 so first payment is immediately redeemable.
-        subscriptions[subscriptionCounter] = Subscription(recipient, amount, 0, frequency);
+        subscriptions[subId] = Subscription(recipient, amount, 0, frequency);
     }
 
     function _extractRecipient(bytes calldata coordinates, address[] calldata flowVertices)
@@ -116,6 +116,11 @@ contract SubscriptionModule is Module {
         );
 
         return (block.timestamp + sub.frequency);
+    }
+
+    function cancel(uint256 subId) external onlyManager {
+        subscriptions[subId] =
+            Subscription({recipient: address(0), amount: 0, lastRedeemed: type(uint256).max, frequency: 0});
     }
 
     /// @notice Executes the transaction from module with the guard checks
