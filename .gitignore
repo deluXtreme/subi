@@ -23,6 +23,6 @@ docs/
 
 # Silverback sessions
 automation/.silverback-sessions/
-automation/.silverback-images/
+
 
 .DS_Store
