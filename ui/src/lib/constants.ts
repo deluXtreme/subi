@@ -5,7 +5,7 @@ export const MODULE_PROXY_FACTORY = getAddress(
 );
 
 export const SUBSCRIPTION_MASTER_COPY = getAddress(
-  "0x58c031cc02031009dD2CcDDD8A0DF22Cc720ea9B",
+  "0x80242DCdc1bDfA3271D993cE3a4E568B54981E3C",
 );
 
 export const SUBSCRIPTION_MANAGER = getAddress(
