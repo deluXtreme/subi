@@ -112,9 +112,9 @@ function buildRegisterManagerTx(
 ): MetaTransactionData {
   // Build the call data for enabling the module
   const enableModuleData = encodeFunctionData({
-    abi: parseAbi(["function registerModule(address module)"]),
+    abi: parseAbi(["function registerModule(address module, bool isEnabled)"]),
     functionName: "registerModule",
-    args: [moduleAddress],
+    args: [moduleAddress, true],
   });
 
   // Prepare the meta-transaction data object
