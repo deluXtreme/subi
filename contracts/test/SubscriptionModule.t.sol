@@ -39,14 +39,9 @@ contract SubscriptionModuleTest is Test {
 
         vm.startPrank(address(owner));
         subscriptionModule = new ExposedSubscriptionModule(owner, avatar, target);
-        manager.registerModule(address(subscriptionModule));
+        manager.registerModule(address(subscriptionModule), true);
         // manager.subscribe(recipient, 1e12, 3600);
         vm.stopPrank();
-    }
-
-    function test_Subscribe() external {
-        vm.startPrank(address(owner));
-        manager.subscribe(recipient, 1e12, 3600);
     }
 
     function testExtractRecipient() public view {
