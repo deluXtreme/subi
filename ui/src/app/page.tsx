@@ -1,5 +1,6 @@
 import { SubscribeButton } from "@/components/subscribe-button";
 import { ClientOnly } from "@/components/client-only";
+import { formatEther } from "viem";
 
 export default function Home() {
   return (
@@ -28,7 +29,7 @@ export default function Home() {
                 <div className="flex justify-between items-center py-3 px-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                   <span className="text-gray-700 dark:text-gray-300 font-semibold">Amount:</span>
                   <span className="font-bold text-circles-primary">
-                    1000000000000 CRCs
+                    {formatEther(BigInt(1000000000000))} CRCs
                   </span>
                 </div>
                 <div className="flex justify-between items-center py-3 px-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
