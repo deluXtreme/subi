@@ -19,7 +19,7 @@ contract SubscriptionModule is Module {
     }
 
     address public constant HUB_ADDRESS = 0xc12C1E50ABB450d6205Ea2C3Fa861b3B834d13e8;
-    address public constant SUBSCRIPTION_MANAGER = 0x27c2a11AA3E2237fDE4aE782cC36eBBB49d26c57;
+    address public constant SUBSCRIPTION_MANAGER = 0x7E9BaF7CC7cD83bACeFB9B2D5c5124C0F9c30834;
 
     uint256 public subscriptionCounter;
     mapping(uint256 => Subscription) public subscriptions;
@@ -59,7 +59,7 @@ contract SubscriptionModule is Module {
         subId = subscriptionCounter;
         subscriptionCounter++;
         // Initial lastRedeemed is 0 so first payment is immediately redeemable.
-        subscriptions[subscriptionCounter] = Subscription(recipient, amount, 0, frequency);
+        subscriptions[subId] = Subscription(recipient, amount, 0, frequency);
     }
 
     function _extractRecipient(bytes calldata coordinates, address[] calldata flowVertices)
@@ -116,6 +116,11 @@ contract SubscriptionModule is Module {
         );
 
         return (block.timestamp + sub.frequency);
+    }
+
+    function cancel(uint256 subId) external onlyManager {
+        subscriptions[subId] =
+            Subscription({recipient: address(0), amount: 0, lastRedeemed: type(uint256).max, frequency: 0});
     }
 
     /// @notice Executes the transaction from module with the guard checks

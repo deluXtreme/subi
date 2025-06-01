@@ -35,14 +35,21 @@ contract SubscriptionManager {
 
     event Redeemed(uint256 indexed subId, address indexed module, uint256 indexed nextRedeemAt);
 
+    event SubscriptionCancelled(uint256 indexed subId, address indexed module);
+
     /*//////////////////////////////////////////////////////////////
                    USER-FACING NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
-    function registerModule(address module) external {
+    function registerModule(address module, bool isEnabled) external {
         require(msg.sender == ISubscriptionModule(module).owner());
-        modules[msg.sender] = module;
-        allModules.add(module);
+        if (isEnabled) {
+            modules[msg.sender] = module;
+            allModules.add(module);
+        } else {
+            delete modules[msg.sender];
+            allModules.remove(module);
+        }
     }
 
     function subscribe(address recipient, uint256 amount, uint256 frequency) external {
@@ -65,6 +72,12 @@ contract SubscriptionManager {
         uint256 nextRedeemAt =
             ISubscriptionModule(module).redeemPayment(subId, flowVertices, flow, streams, packedCoordinates);
         emit Redeemed(subId, module, nextRedeemAt);
+    }
+
+    function cancel(address module, uint256 subId) external {
+        require(msg.sender == ISubscriptionModule(module).owner());
+        ISubscriptionModule(module).cancel(subId);
+        emit SubscriptionCancelled(subId, module);
     }
 
     /*//////////////////////////////////////////////////////////////

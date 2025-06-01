@@ -15,4 +15,6 @@ interface ISubscriptionModule {
         TypeDefinitions.Stream[] calldata streams,
         bytes calldata packedCoordinates
     ) external returns (uint256);
+
+    function cancel(uint256 subId) external;
 }
