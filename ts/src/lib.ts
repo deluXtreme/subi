@@ -44,14 +44,11 @@ export async function prepareEnableModuleTransactions(
     transport: http("https://rpc.gnosischain.com/"),
   });
 
-  const code = await client.getCode({
-    address: moduleProxyAddress,
-  });
-
+  const [code, installedSafes] = await Promise.all([
+    client.getCode({ address: moduleProxyAddress }),
+    getSafesForModule(moduleProxyAddress),
+  ]);
   const isDeployed = code !== undefined;
-
-  const installedSafes = await getSafesForModule(moduleProxyAddress);
-
   const isInstalled = installedSafes.includes(safeAddress);
 
   // Prepare the meta-transaction data object

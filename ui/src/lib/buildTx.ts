@@ -55,10 +55,6 @@ export async function prepareEnableModuleTransactions(
     client.getCode({ address: moduleProxyAddress }),
     getSafesForModule(moduleProxyAddress),
   ]);
-  // const code = await client.getCode({
-  //   address: moduleProxyAddress,
-  // });
-  // const installedSafes = await getSafesForModule(moduleProxyAddress);
   const isDeployed = code !== undefined;
   const isInstalled = installedSafes.includes(safeAddress);
 
