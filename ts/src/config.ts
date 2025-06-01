@@ -20,6 +20,7 @@ export const getWalletClient = () => {
   return createWalletClient({
     chain: gnosis,
     transport: http(rpcUrl),
+    account: SIGNER_ACCOUNT,
   }).extend(publicActions);
 };
 
