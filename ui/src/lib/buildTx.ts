@@ -10,6 +10,7 @@ import {
   getCreate2Address,
   createPublicClient,
   http,
+  getAddress,
 } from "viem";
 import { type MetaTransactionData } from "@safe-global/types-kit";
 import {
@@ -44,16 +45,22 @@ export async function prepareEnableModuleTransactions(
 
   const { tx: deployModuleTx, predictedAddress: moduleProxyAddress } =
     await buildModuleDeploymentTx(safeAddress, salt);
+  
   const client = createPublicClient({
     chain: gnosis,
     transport: http("https://rpc.gnosischain.com/"),
   });
 
-  const code = await client.getCode({
-    address: moduleProxyAddress,
-  });
-
+  const [code, installedSafes] = await Promise.all([
+    client.getCode({ address: moduleProxyAddress }),
+    getSafesForModule(moduleProxyAddress),
+  ]);
+  // const code = await client.getCode({
+  //   address: moduleProxyAddress,
+  // });
+  // const installedSafes = await getSafesForModule(moduleProxyAddress);
   const isDeployed = code !== undefined;
+  const isInstalled = installedSafes.includes(safeAddress);
 
   logger.info("Module deployment transaction prepared", {
     safeAddress,
@@ -76,10 +83,10 @@ export async function prepareEnableModuleTransactions(
     moduleProxyAddress,
   );
   logger.debug("Module approval transaction built", { moduleApprovalTx });
-  
+
   return [
-    ...isDeployed ? [] : [deployModuleTx],
-    enableModuleTx,
+    ...(isDeployed ? [] : [deployModuleTx]),
+    ...(isInstalled ? [] : [enableModuleTx]),
     registerModuleTx,
     moduleApprovalTx,
   ];
@@ -331,4 +338,26 @@ function predictMinimalProxyAddress({
   });
 
   return predictedAddress;
+}
+
+async function getSafesForModule(moduleAddress: string): Promise<Address[]> {
+  const SAFE_MODULES_URL =
+    "https://safe-transaction-gnosis-chain.safe.global/api/v1/modules";
+  const url = `${SAFE_MODULES_URL}/${moduleAddress}/safes/`;
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch safes for module ${moduleAddress}: ${response.statusText}`,
+    );
+  }
+
+  const data: { safes: string[] } = await response.json();
+  return data.safes.map((x) => getAddress(x));
 }
