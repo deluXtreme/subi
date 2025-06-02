@@ -6,9 +6,6 @@ import { getDefaultConfig } from "@rainbow-me/rainbowkit";
 const getProjectId = (): string => {
   const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
   if (!projectId) {
-    console.warn(
-      "NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID not set, using fallback",
-    );
     return "0deda9a6c0cac87c2fd74dc0fce259c6";
   }
   return projectId;
