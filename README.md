@@ -6,7 +6,7 @@
 
 ## Overview
 
-Subi enables **Circles users to securely, trustlessly & smoothly authorize recurring payments** from their accounts. By integrating with the revolutionary Circles monetary system, we're not just enabling payments - we're participating in a fundamental reimagining of money itself, where currency creation is democratized and distributed to every individual rather than concentrated in banks and central institutions.
+Subi enables **Circles users to securely, trustlessly & smoothly authorize recurring payments** from their accounts. By integrating with the Circles protocol, we're not just enabling payments - we're participating in a fundamental reimagining of money itself, where currency creation is democratized and distributed to every individual rather than concentrated in banks and central institutions.
 
 **Short**: Circles users can now securely, trustlessly & smoothly authorize recurring payments.
 
@@ -42,6 +42,7 @@ Next.js application for subscription management:
 - **Circles Protocol** - Leveraging trust-based currency creation and transfer flows
 - **Silverback** - Ape Framework bot for automated payment collection
 - **EIP-7702** - Batched payment collections for EOA multisend (time permitting)
+- **EIP-5792** - Wallet call API for sending multiple calls from the user's wallet, and checking their status
 - **Create2** - Deterministic module proxy deployment
 
 ### Most Notable Technical Achievements
@@ -121,14 +122,14 @@ bun --bun run dev
 
 **Why Circles?**
 - **Universal Money Creation**: Everyone creates 1 CRC per hour equally
-- **Trust-based Economy**: Leverages real-world relationships for value transfer  
+- **Trust-based Economy**: Leverages real-world relationships for value transfer
 - **Demurrage System**: 7% yearly reduction keeps money flowing and active
 - **Group Currencies**: Explicit fungibility for seamless integrations
 
 **Technical Implementation**:
 Each redemption requires computing a valid trust-based payment path through the Circles network, then encoding it into:
 - **Trusted avatars** (vertices)
-- **Directional flows** (edges) 
+- **Directional flows** (edges)
 - **Recipient validation logic** (streams)
 - **Compact sender/receiver encoding** (packed coordinates)
 
@@ -188,8 +189,8 @@ cd ui && bun run generate  # Generate typed hooks from contract ABIs
 ## Built for ETHPrague 2025
 
 This project showcases:
-- ✅ **Monetary Innovation** - First Safe integration with Circles' revolutionary currency creation
-- ✅ **Trust-based Economy** - Peer-to-peer value transfer without traditional financial intermediaries  
+- ✅ **Monetary Innovation** - First Safe integration with Circles' protocol
+- ✅ **Trust-based Economy** - Peer-to-peer value transfer without traditional financial intermediaries
 - ✅ **Safe Ecosystem Advancement** - Proper Zodiac module integration with advanced proxy patterns
 - ✅ **Automation Excellence** - Permissionless bot architecture for reliable payment execution
 - ✅ **Modern Web3 Development** - Type-safe contract interactions with auto-generated hooks
@@ -201,6 +202,6 @@ This project showcases:
 
 ---
 
-**Live Demo**: Available at ETHPrague 2025  
-**Contracts**: [Blockscout Explorer](https://gnosis.blockscout.com/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)  
+**Live Demo**: Available at ETHPrague 2025
+**Contracts**: [Blockscout Explorer](https://gnosis.blockscout.com/address/0x01E65042f8CE628f07bba35c97883825e7B97c2f)
 **License**: MIT
