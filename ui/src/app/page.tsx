@@ -1,11 +1,6 @@
-import { SubscribeButton } from "@/components/subscribe-button";
-import { ClientOnly } from "@/components/client-only";
-import { formatEther } from "viem";
+import { DynamicSubscribeButton } from "@/components/dynamic-subscribe-button";
 
 export default function Home() {
-  const amount = BigInt(1000000000000);
-  const frequency = BigInt(3600);
-  const recipient = "0xede0c2e70e8e2d54609c1bdf79595506b6f623fe";
 
   return (
     <div className="min-h-screen p-8 bg-gray-50 dark:bg-gray-900">
@@ -28,39 +23,8 @@ export default function Home() {
               Create Subscription
             </h2>
             <div className="p-8 border border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 shadow-sm">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6">Subscription Details</h3>
-              <div className="space-y-4 mb-8">
-                <div className="flex justify-between items-center py-3 px-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                  <span className="text-gray-700 dark:text-gray-300 font-semibold">Amount:</span>
-                  <span className="font-bold text-circles-primary">
-                    {formatEther(amount)} CRCs
-                  </span>
-                </div>
-                <div className="flex justify-between items-center py-3 px-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                  <span className="text-gray-700 dark:text-gray-300 font-semibold">Frequency:</span>
-                  <span className="font-bold text-circles-primary">Every {frequency} seconds</span>
-                </div>
-                <div className="flex justify-between items-center py-3 px-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                  <span className="text-gray-700 dark:text-gray-300 font-semibold">Recipient:</span>
-                  <span className="font-mono text-sm text-circles-accent">{recipient}</span>
-                </div>
-              </div>
-              <ClientOnly
-                fallback={
-                  <div className="p-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700">
-                    <div className="animate-pulse">
-                      <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
-                      <div className="h-8 bg-gray-200 rounded"></div>
-                    </div>
-                  </div>
-                }
-              >
-                <SubscribeButton
-                  recipient={recipient}
-                  amount={amount}
-                  frequency={frequency}
-                />
-              </ClientOnly>
+              <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6">Create Subscription</h3>
+              <DynamicSubscribeButton />
             </div>
           </div>
         </div>

@@ -10,22 +10,15 @@ import {
   useReadSubscriptionManagerModules,
 } from "@/generated";
 import { getTransactionUrl } from "@/lib/blockscout";
+import { InputForm } from "./input-form";
 
 import { useNotification } from "@blockscout/app-sdk";
 
 interface SubscribeButtonProps {
-  recipient?: string;
-  amount?: bigint;
-  frequency?: bigint;
   className?: string;
 }
 
-export function SubscribeButton({
-  recipient = "0xcF6Dc192dc292D5F2789DA2DB02D6dD4f41f4214",
-  amount = BigInt(1000000000000), // 1 USDC (6 decimals)
-  frequency = BigInt(3600), // 1 hour
-  className = "",
-}: SubscribeButtonProps) {
+export function SubscribeButton({ className = "" }: SubscribeButtonProps) {
   const { address, isConnected } = useAccount();
   const { openTxToast } = useNotification();
   const {
@@ -43,6 +36,11 @@ export function SubscribeButton({
   );
   const [registrationHash, setRegistrationHash] = useState<string | null>(null);
   const [isRegistrationConfirmed, setIsRegistrationConfirmed] = useState(false);
+  const [subscriptionData, setSubscriptionData] = useState<{
+    recipient: string;
+    amount: bigint;
+    frequency: bigint;
+  } | null>(null);
 
   // Get the user's registered module address
   const {
@@ -121,14 +119,27 @@ export function SubscribeButton({
     userModuleAddress &&
     userModuleAddress !== "0x0000000000000000000000000000000000000000";
 
-  const handleSubscribe = async () => {
+  const handleFormSubmit = (data: {
+    recipient: string;
+    amount: bigint;
+    frequency: bigint;
+  }) => {
+    setSubscriptionData(data);
+    handleSubscribe(data);
+  };
+
+  const handleSubscribe = async (data: {
+    recipient: string;
+    amount: bigint;
+    frequency: bigint;
+  }) => {
     if (!address || !hasModuleInstalled) {
       return;
     }
 
     try {
       writeContract({
-        args: [recipient as `0x${string}`, amount, frequency],
+        args: [data.recipient as `0x${string}`, data.amount, data.frequency],
       });
     } catch (error) {
       throw error;
@@ -275,19 +286,13 @@ export function SubscribeButton({
         </p>
       </div>
 
-      <button
-        onClick={handleSubscribe}
+      <InputForm
+        onSubmitAction={handleFormSubmit}
         disabled={isPending || isConfirming}
-        className={`px-6 py-3 bg-circles-primary hover:bg-circles-primary text-white rounded-lg font-bold transition-colors ${
-          isPending || isConfirming ? "opacity-50 cursor-not-allowed" : ""
-        }`}
-      >
-        {isPending
-          ? "Preparing..."
-          : isConfirming
-            ? "Creating Subscription..."
-            : "Create Subscription"}
-      </button>
+        initialRecipient="0xede0c2e70e8e2d54609c1bdf79595506b6f623fe"
+        initialAmount={BigInt(1000000000000)}
+        initialFrequency={BigInt(3600)}
+      />
 
       {error && (
         <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
@@ -310,6 +315,16 @@ export function SubscribeButton({
               View transaction
             </a>
           </p>
+          {subscriptionData && (
+            <div className="mt-2 text-xs text-gray-600">
+              <p>Recipient: {subscriptionData.recipient}</p>
+              <p>
+                Amount: {(Number(subscriptionData.amount) / 1e12).toFixed(6)}{" "}
+                CRCs
+              </p>
+              <p>Frequency: Every {subscriptionData.frequency} seconds</p>
+            </div>
+          )}
         </div>
       )}
 
@@ -329,6 +344,16 @@ export function SubscribeButton({
           <p className="text-gray-600 text-xs mt-1">
             Recipients can now redeem payments when they become due.
           </p>
+          {subscriptionData && (
+            <div className="mt-2 text-xs text-gray-600">
+              <p>Recipient: {subscriptionData.recipient}</p>
+              <p>
+                Amount: {(Number(subscriptionData.amount) / 1e12).toFixed(6)}{" "}
+                CRCs
+              </p>
+              <p>Frequency: Every {subscriptionData.frequency} seconds</p>
+            </div>
+          )}
         </div>
       )}
     </div>
